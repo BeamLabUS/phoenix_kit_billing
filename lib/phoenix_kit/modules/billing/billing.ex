@@ -113,6 +113,9 @@ defmodule PhoenixKit.Modules.Billing do
   def module_name, do: "Billing"
 
   @impl PhoenixKit.Module
+  def route_module, do: PhoenixKit.Modules.Billing.Web.Routes
+
+  @impl PhoenixKit.Module
   def permission_metadata do
     %{
       key: "billing",
