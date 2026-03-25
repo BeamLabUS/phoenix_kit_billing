@@ -4,6 +4,20 @@ defmodule PhoenixKit.Modules.Billing.Web.OrderForm do
   """
 
   use Phoenix.LiveView
+  use Gettext, backend: PhoenixKitWeb.Gettext
+  import PhoenixKitWeb.Components.Core.AdminPageHeader
+  import PhoenixKitWeb.Components.Core.UserInfo
+  import PhoenixKitWeb.Components.Core.ThemeSwitcher
+  import PhoenixKitWeb.Components.Core.StatCard
+  import PhoenixKitWeb.Components.Core.EmailStatusBadge
+  import PhoenixKitWeb.Components.Core.EventTimelineItem
+  import PhoenixKitWeb.Components.Core.FileDisplay
+  import PhoenixKitWeb.Components.Core.NumberFormatter
+  import PhoenixKitWeb.Components.Core.TableDefault
+  import PhoenixKitWeb.Components.Core.TableRowMenu
+  import PhoenixKitWeb.Components.Core.Accordion
+  import PhoenixKitWeb.Components.Core.Modal
+  import PhoenixKitWeb.Components.Core.PkLink
   import Phoenix.HTML
   import Phoenix.HTML.Form
   import Phoenix.LiveView.Helpers
