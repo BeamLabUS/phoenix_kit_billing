@@ -12,42 +12,7 @@ defmodule PhoenixKit.Modules.Billing.Web.CreditNotePrint do
 
   use Phoenix.LiveView
   use Gettext, backend: PhoenixKitWeb.Gettext
-  import PhoenixKitWeb.Components.Core.AdminPageHeader
-  import PhoenixKitWeb.Components.Core.UserInfo
-  import PhoenixKitWeb.Components.Core.ThemeSwitcher
-  import PhoenixKitWeb.Components.Core.StatCard
-  import PhoenixKitWeb.Components.Core.EmailStatusBadge
-  import PhoenixKitWeb.Components.Core.EventTimelineItem
-  import PhoenixKitWeb.Components.Core.FileDisplay
-  import PhoenixKitWeb.Components.Core.NumberFormatter
-  import PhoenixKitWeb.Components.Core.TableDefault
-  import PhoenixKitWeb.Components.Core.TableRowMenu
-  import PhoenixKitWeb.Components.Core.Accordion
-  import PhoenixKitWeb.Components.Core.Modal
-  import PhoenixKitWeb.Components.Core.PkLink
-  import Phoenix.HTML
-  import Phoenix.HTML.Form
-  import Phoenix.LiveView.Helpers
   alias PhoenixKit.Utils.Routes
-  import PhoenixKitWeb.LayoutHelpers, only: [dashboard_assigns: 1]
-  import PhoenixKitWeb.Components.Core.Button
-  import PhoenixKitWeb.Components.Core.Flash
-  import PhoenixKitWeb.Components.Core.Header
-  import PhoenixKitWeb.Components.Core.Icon
-  import PhoenixKitWeb.Components.Core.FormFieldLabel
-  import PhoenixKitWeb.Components.Core.FormFieldError
-  import PhoenixKitWeb.Components.Core.Input
-  import PhoenixKitWeb.Components.Core.Textarea
-  import PhoenixKitWeb.Components.Core.Select
-  import PhoenixKitWeb.Components.Core.Checkbox
-  import PhoenixKitWeb.Components.Core.SimpleForm
-  import PhoenixKitWeb.Components.Core.Badge
-  import PhoenixKitWeb.Components.Core.Pagination
-  import PhoenixKitWeb.Components.Core.TimeDisplay
-  import PhoenixKit.Modules.Billing.Web.Components.CurrencyDisplay
-  import PhoenixKit.Modules.Billing.Web.Components.InvoiceStatusBadge
-  import PhoenixKit.Modules.Billing.Web.Components.TransactionTypeBadge
-  import PhoenixKit.Modules.Billing.Web.Components.OrderStatusBadge
 
   alias PhoenixKit.Modules.Billing
   alias PhoenixKit.Utils.CountryData
@@ -58,7 +23,7 @@ defmodule PhoenixKit.Modules.Billing.Web.CreditNotePrint do
   @impl true
   def mount(%{"id" => invoice_uuid, "transaction_uuid" => transaction_uuid}, _session, socket) do
     with true <- Billing.enabled?(),
-         %{} = invoice <- Billing.get_invoice(invoice_uuid, preload: [:user, :order]),
+         %{} = invoice <- Billing.get_invoice(invoice_uuid, preload: [:order]),
          %Transaction{} = transaction <- Billing.get_transaction(transaction_uuid),
          true <- Transaction.refund?(transaction) do
       mount_credit_note(socket, invoice, transaction)

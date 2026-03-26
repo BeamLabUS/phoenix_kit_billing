@@ -621,7 +621,7 @@ defmodule PhoenixKit.Modules.Billing do
 
     total = repo().aggregate(base_query, :count, :uuid)
 
-    preloads = Keyword.get(opts, :preload, [:user])
+    preloads = Keyword.get(opts, :preload, [])
 
     profiles =
       base_query
@@ -776,7 +776,7 @@ defmodule PhoenixKit.Modules.Billing do
     Order
     |> apply_order_filters(filters)
     |> order_by([o], desc: o.inserted_at)
-    |> preload([:user, :billing_profile])
+    |> preload([:billing_profile])
     |> repo().all()
   end
 
@@ -833,7 +833,7 @@ defmodule PhoenixKit.Modules.Billing do
 
     total = repo().aggregate(base_query, :count, :uuid)
 
-    preloads = Keyword.get(opts, :preload, [:user])
+    preloads = Keyword.get(opts, :preload, [])
 
     orders =
       base_query
@@ -862,7 +862,7 @@ defmodule PhoenixKit.Modules.Billing do
   def get_order(id, opts \\ [])
 
   def get_order(id, opts) when is_binary(id) do
-    preloads = Keyword.get(opts, :preload, [:user, :billing_profile])
+    preloads = Keyword.get(opts, :preload, [:billing_profile])
 
     if UUIDUtils.valid?(id) do
       Order
@@ -882,7 +882,7 @@ defmodule PhoenixKit.Modules.Billing do
   def get_order_by_number(order_number) do
     Order
     |> where([o], o.order_number == ^order_number)
-    |> preload([:user, :billing_profile])
+    |> preload([:billing_profile])
     |> repo().one()
   end
 
@@ -891,7 +891,7 @@ defmodule PhoenixKit.Modules.Billing do
   Used for public-facing URLs to prevent ID enumeration.
   """
   def get_order_by_uuid(uuid, opts \\ []) do
-    preloads = Keyword.get(opts, :preload, [:user, :billing_profile])
+    preloads = Keyword.get(opts, :preload, [:billing_profile])
 
     Order
     |> where([o], o.uuid == ^uuid)
@@ -1198,7 +1198,7 @@ defmodule PhoenixKit.Modules.Billing do
     Invoice
     |> apply_invoice_filters(filters)
     |> order_by([i], desc: i.inserted_at)
-    |> preload([:user, :order])
+    |> preload([:order])
     |> repo().all()
   end
 
@@ -1255,7 +1255,7 @@ defmodule PhoenixKit.Modules.Billing do
 
     total = repo().aggregate(base_query, :count, :uuid)
 
-    preloads = Keyword.get(opts, :preload, [:user, :order])
+    preloads = Keyword.get(opts, :preload, [:order])
 
     invoices =
       base_query
@@ -1284,7 +1284,7 @@ defmodule PhoenixKit.Modules.Billing do
   def get_invoice(id, opts \\ [])
 
   def get_invoice(id, opts) when is_binary(id) do
-    preloads = Keyword.get(opts, :preload, [:user, :order])
+    preloads = Keyword.get(opts, :preload, [:order])
 
     if UUIDUtils.valid?(id) do
       Invoice
@@ -1314,7 +1314,7 @@ defmodule PhoenixKit.Modules.Billing do
   def get_invoice_by_number(invoice_number) do
     Invoice
     |> where([i], i.invoice_number == ^invoice_number)
-    |> preload([:user, :order])
+    |> preload([:order])
     |> repo().one()
   end
 
@@ -1415,7 +1415,7 @@ defmodule PhoenixKit.Modules.Billing do
     to_email = Keyword.get(opts, :to_email)
 
     # Preload user if not loaded
-    invoice = ensure_preloaded(invoice, [:user, :order])
+    invoice = ensure_preloaded(invoice, [:order])
 
     # Determine recipient email
     recipient_email = to_email || (invoice.user && invoice.user.email)
@@ -1469,7 +1469,7 @@ defmodule PhoenixKit.Modules.Billing do
   """
   def send_invoice_email(%Invoice{} = invoice, opts \\ []) do
     # Preload user if not loaded
-    invoice = ensure_preloaded(invoice, [:user, :order])
+    invoice = ensure_preloaded(invoice, [:order])
 
     # Use to_email from opts, or fall back to user email
     to_email = Keyword.get(opts, :to_email)
@@ -1525,7 +1525,7 @@ defmodule PhoenixKit.Modules.Billing do
     to_email = Keyword.get(opts, :to_email)
 
     # Preload user if not loaded
-    invoice = ensure_preloaded(invoice, [:user, :order])
+    invoice = ensure_preloaded(invoice, [:order])
 
     # Get recipient email
     recipient_email = to_email || (invoice.user && invoice.user.email)
@@ -1568,7 +1568,7 @@ defmodule PhoenixKit.Modules.Billing do
   """
   def send_receipt_email(%Invoice{} = invoice, opts \\ []) do
     # Preload user if not loaded
-    invoice = ensure_preloaded(invoice, [:user, :order])
+    invoice = ensure_preloaded(invoice, [:order])
 
     # Use to_email from opts, or fall back to user email
     to_email = Keyword.get(opts, :to_email)
@@ -1629,7 +1629,7 @@ defmodule PhoenixKit.Modules.Billing do
     to_email = Keyword.get(opts, :to_email)
 
     # Preload user if not loaded
-    invoice = ensure_preloaded(invoice, [:user, :order])
+    invoice = ensure_preloaded(invoice, [:order])
 
     # Get recipient email
     recipient_email = to_email || (invoice.user && invoice.user.email)
@@ -1681,7 +1681,7 @@ defmodule PhoenixKit.Modules.Billing do
   """
   def send_credit_note_email(%Invoice{} = invoice, %Transaction{} = transaction, opts \\ []) do
     # Preload user if not loaded
-    invoice = ensure_preloaded(invoice, [:user, :order])
+    invoice = ensure_preloaded(invoice, [:order])
 
     # Use to_email from opts, or fall back to user email
     to_email = Keyword.get(opts, :to_email)
@@ -1765,7 +1765,7 @@ defmodule PhoenixKit.Modules.Billing do
     to_email = Keyword.get(opts, :to_email)
 
     # Preload user if not loaded
-    invoice = ensure_preloaded(invoice, [:user, :order])
+    invoice = ensure_preloaded(invoice, [:order])
 
     # Get recipient email
     recipient_email = to_email || (invoice.user && invoice.user.email)
@@ -1818,7 +1818,7 @@ defmodule PhoenixKit.Modules.Billing do
         opts \\ []
       ) do
     # Preload user if not loaded
-    invoice = ensure_preloaded(invoice, [:user, :order])
+    invoice = ensure_preloaded(invoice, [:order])
 
     # Use to_email from opts, or fall back to user email
     to_email = Keyword.get(opts, :to_email)
@@ -2387,7 +2387,7 @@ defmodule PhoenixKit.Modules.Billing do
   Gets transactions for a specific invoice.
   """
   def list_invoice_transactions(invoice_uuid) when is_binary(invoice_uuid) do
-    list_transactions(invoice_uuid: invoice_uuid, preload: [:user])
+    list_transactions(invoice_uuid: invoice_uuid, preload: [])
   end
 
   @doc """
