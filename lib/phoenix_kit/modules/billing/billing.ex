@@ -139,7 +139,8 @@ defmodule PhoenixKit.Modules.Billing do
         match: :prefix,
         group: :admin_modules,
         subtab_display: :when_active,
-        highlight_with_subtabs: false
+        highlight_with_subtabs: false,
+        live_view: {PhoenixKit.Modules.Billing.Web.Index, :index}
       ),
       Tab.new!(
         id: :admin_billing_dashboard,
@@ -150,7 +151,8 @@ defmodule PhoenixKit.Modules.Billing do
         level: :admin,
         permission: "billing",
         parent: :admin_billing,
-        match: :exact
+        match: :exact,
+        live_view: {PhoenixKit.Modules.Billing.Web.Index, :index}
       ),
       Tab.new!(
         id: :admin_billing_orders,
@@ -160,7 +162,8 @@ defmodule PhoenixKit.Modules.Billing do
         priority: 522,
         level: :admin,
         permission: "billing",
-        parent: :admin_billing
+        parent: :admin_billing,
+        live_view: {PhoenixKit.Modules.Billing.Web.Orders, :index}
       ),
       Tab.new!(
         id: :admin_billing_invoices,
@@ -170,7 +173,8 @@ defmodule PhoenixKit.Modules.Billing do
         priority: 523,
         level: :admin,
         permission: "billing",
-        parent: :admin_billing
+        parent: :admin_billing,
+        live_view: {PhoenixKit.Modules.Billing.Web.Invoices, :index}
       ),
       Tab.new!(
         id: :admin_billing_transactions,
@@ -180,7 +184,8 @@ defmodule PhoenixKit.Modules.Billing do
         priority: 524,
         level: :admin,
         permission: "billing",
-        parent: :admin_billing
+        parent: :admin_billing,
+        live_view: {PhoenixKit.Modules.Billing.Web.Transactions, :index}
       ),
       Tab.new!(
         id: :admin_billing_subscriptions,
@@ -190,7 +195,8 @@ defmodule PhoenixKit.Modules.Billing do
         priority: 525,
         level: :admin,
         permission: "billing",
-        parent: :admin_billing
+        parent: :admin_billing,
+        live_view: {PhoenixKit.Modules.Billing.Web.Subscriptions, :index}
       ),
       Tab.new!(
         id: :admin_billing_subscription_types,
@@ -200,7 +206,8 @@ defmodule PhoenixKit.Modules.Billing do
         priority: 526,
         level: :admin,
         permission: "billing",
-        parent: :admin_billing
+        parent: :admin_billing,
+        live_view: {PhoenixKit.Modules.Billing.Web.SubscriptionTypes, :index}
       ),
       Tab.new!(
         id: :admin_billing_profiles,
@@ -210,7 +217,8 @@ defmodule PhoenixKit.Modules.Billing do
         priority: 527,
         level: :admin,
         permission: "billing",
-        parent: :admin_billing
+        parent: :admin_billing,
+        live_view: {PhoenixKit.Modules.Billing.Web.BillingProfiles, :index}
       ),
       Tab.new!(
         id: :admin_billing_currencies,
@@ -220,7 +228,8 @@ defmodule PhoenixKit.Modules.Billing do
         priority: 528,
         level: :admin,
         permission: "billing",
-        parent: :admin_billing
+        parent: :admin_billing,
+        live_view: {PhoenixKit.Modules.Billing.Web.Currencies, :index}
       ),
       Tab.new!(
         id: :admin_billing_providers,
@@ -230,7 +239,8 @@ defmodule PhoenixKit.Modules.Billing do
         priority: 529,
         level: :admin,
         permission: "billing",
-        parent: :admin_billing
+        parent: :admin_billing,
+        live_view: {PhoenixKit.Modules.Billing.Web.ProviderSettings, :index}
       )
     ]
   end
@@ -247,7 +257,8 @@ defmodule PhoenixKit.Modules.Billing do
         level: :admin,
         parent: :admin_settings,
         permission: "billing",
-        match: :exact
+        match: :exact,
+        live_view: {PhoenixKit.Modules.Billing.Web.Settings, :index}
       )
     ]
   end
