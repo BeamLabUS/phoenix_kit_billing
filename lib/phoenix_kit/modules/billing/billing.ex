@@ -1494,17 +1494,13 @@ defmodule PhoenixKit.Modules.Billing do
         user = invoice.user
         variables = build_invoice_email_variables(invoice, user, opts)
 
-        if Code.ensure_loaded?(PhoenixKit.Modules.Emails) do
-          PhoenixKit.Modules.Emails.Templates.send_email(
-            "billing_invoice",
-            email,
-            variables,
-            user_uuid: user && user.uuid,
-            metadata: %{invoice_uuid: invoice.uuid, invoice_number: invoice.invoice_number}
-          )
-        else
-          :ok
-        end
+        send_email_if_available(
+          "billing_invoice",
+          email,
+          variables,
+          user_uuid: user && user.uuid,
+          metadata: %{invoice_uuid: invoice.uuid, invoice_number: invoice.invoice_number}
+        )
     end
   end
 
@@ -1593,21 +1589,17 @@ defmodule PhoenixKit.Modules.Billing do
         user = invoice.user
         variables = build_receipt_email_variables(invoice, user, opts)
 
-        if Code.ensure_loaded?(PhoenixKit.Modules.Emails) do
-          PhoenixKit.Modules.Emails.Templates.send_email(
-            "billing_receipt",
-            email,
-            variables,
-            user_uuid: user && user.uuid,
-            metadata: %{
-              invoice_uuid: invoice.uuid,
-              receipt_number: invoice.receipt_number,
-              invoice_number: invoice.invoice_number
-            }
-          )
-        else
-          :ok
-        end
+        send_email_if_available(
+          "billing_receipt",
+          email,
+          variables,
+          user_uuid: user && user.uuid,
+          metadata: %{
+            invoice_uuid: invoice.uuid,
+            receipt_number: invoice.receipt_number,
+            invoice_number: invoice.invoice_number
+          }
+        )
     end
   end
 
@@ -1706,22 +1698,18 @@ defmodule PhoenixKit.Modules.Billing do
         user = invoice.user
         variables = build_credit_note_email_variables(invoice, transaction, user, opts)
 
-        if Code.ensure_loaded?(PhoenixKit.Modules.Emails) do
-          PhoenixKit.Modules.Emails.Templates.send_email(
-            "billing_credit_note",
-            email,
-            variables,
-            user_uuid: user && user.uuid,
-            metadata: %{
-              invoice_uuid: invoice.uuid,
-              transaction_uuid: transaction.uuid,
-              invoice_number: invoice.invoice_number,
-              transaction_number: transaction.transaction_number
-            }
-          )
-        else
-          :ok
-        end
+        send_email_if_available(
+          "billing_credit_note",
+          email,
+          variables,
+          user_uuid: user && user.uuid,
+          metadata: %{
+            invoice_uuid: invoice.uuid,
+            transaction_uuid: transaction.uuid,
+            invoice_number: invoice.invoice_number,
+            transaction_number: transaction.transaction_number
+          }
+        )
     end
   end
 
@@ -1843,22 +1831,18 @@ defmodule PhoenixKit.Modules.Billing do
         user = invoice.user
         variables = build_payment_confirmation_email_variables(invoice, transaction, user, opts)
 
-        if Code.ensure_loaded?(PhoenixKit.Modules.Emails) do
-          PhoenixKit.Modules.Emails.Templates.send_email(
-            "billing_payment_confirmation",
-            email,
-            variables,
-            user_uuid: user && user.uuid,
-            metadata: %{
-              invoice_uuid: invoice.uuid,
-              transaction_uuid: transaction.uuid,
-              invoice_number: invoice.invoice_number,
-              transaction_number: transaction.transaction_number
-            }
-          )
-        else
-          :ok
-        end
+        send_email_if_available(
+          "billing_payment_confirmation",
+          email,
+          variables,
+          user_uuid: user && user.uuid,
+          metadata: %{
+            invoice_uuid: invoice.uuid,
+            transaction_uuid: transaction.uuid,
+            invoice_number: invoice.invoice_number,
+            transaction_number: transaction.transaction_number
+          }
+        )
     end
   end
 
@@ -1892,6 +1876,16 @@ defmodule PhoenixKit.Modules.Billing do
       "company_address" => company.address,
       "payment_url" => payment_url
     }
+  end
+
+  # Sends email via PhoenixKit.Modules.Emails.Templates if available.
+  # Uses apply/3 to avoid compile-time warnings when phoenix_kit_emails is not installed.
+  defp send_email_if_available(template, email, variables, opts) do
+    if Code.ensure_loaded?(PhoenixKit.Modules.Emails) do
+      apply(PhoenixKit.Modules.Emails.Templates, :send_email, [template, email, variables, opts])
+    else
+      :ok
+    end
   end
 
   defp build_receipt_email_variables(invoice, user, opts) do
