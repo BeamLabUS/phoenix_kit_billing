@@ -80,7 +80,7 @@ defmodule PhoenixKit.Modules.Billing.Web.BillingProfiles do
       per_page: per_page,
       search: search,
       type: if(type == "all", do: nil, else: type),
-      preload: []
+      preload: [:user]
     ]
 
     {profiles, total_count} = Billing.list_billing_profiles_with_count(opts)

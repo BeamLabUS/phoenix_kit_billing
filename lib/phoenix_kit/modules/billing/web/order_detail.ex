@@ -23,7 +23,7 @@ defmodule PhoenixKit.Modules.Billing.Web.OrderDetail do
   @impl true
   def mount(%{"id" => id}, _session, socket) do
     if Billing.enabled?() do
-      case Billing.get_order(id, preload: [:billing_profile]) do
+      case Billing.get_order(id, preload: [:billing_profile, :user]) do
         nil ->
           {:ok,
            socket

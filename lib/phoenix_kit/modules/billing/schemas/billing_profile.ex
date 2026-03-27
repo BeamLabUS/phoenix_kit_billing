@@ -95,6 +95,12 @@ defmodule PhoenixKit.Modules.Billing.BillingProfile do
     # User reference (cross-package — FK constraint in core migrations)
     field :user_uuid, UUIDv7
 
+    belongs_to :user, PhoenixKit.Users.Auth.User,
+      foreign_key: :user_uuid,
+      references: :uuid,
+      type: UUIDv7,
+      define_field: false
+
     timestamps(type: :utc_datetime)
   end
 

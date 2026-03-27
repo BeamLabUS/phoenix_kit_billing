@@ -112,7 +112,7 @@ defmodule PhoenixKit.Modules.Billing.Web.Orders do
       per_page: per_page,
       search: search,
       status: if(status == "all", do: nil, else: status),
-      preload: []
+      preload: [:user]
     ]
 
     {orders, total_count} = Billing.list_orders_with_count(opts)

@@ -109,7 +109,7 @@ defmodule PhoenixKit.Modules.Billing.Web.Invoices do
       per_page: per_page,
       search: search,
       status: if(status == "all", do: nil, else: status),
-      preload: [:order]
+      preload: [:order, :user]
     ]
 
     {invoices, total_count} = Billing.list_invoices_with_count(opts)

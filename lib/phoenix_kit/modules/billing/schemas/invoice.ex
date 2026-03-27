@@ -99,6 +99,13 @@ defmodule PhoenixKit.Modules.Billing.Invoice do
 
     # User reference (cross-package — FK constraint in core migrations)
     field :user_uuid, UUIDv7
+
+    belongs_to :user, PhoenixKit.Users.Auth.User,
+      foreign_key: :user_uuid,
+      references: :uuid,
+      type: UUIDv7,
+      define_field: false
+
     belongs_to :order, Order, foreign_key: :order_uuid, references: :uuid, type: UUIDv7
     field :subscription_uuid, UUIDv7
     has_many :transactions, Transaction, foreign_key: :invoice_uuid, references: :uuid
