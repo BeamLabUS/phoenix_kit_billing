@@ -29,9 +29,9 @@ defmodule PhoenixKit.Modules.Billing.Web.Components.InvoiceStatusBadge do
       <.invoice_status_badge status="overdue" size={:md} />
       <.invoice_status_badge status={@invoice.status} class="ml-2" />
   """
-  attr :status, :string, required: true
-  attr :size, :atom, default: :sm, values: [:xs, :sm, :md, :lg]
-  attr :class, :string, default: ""
+  attr(:status, :string, required: true)
+  attr(:size, :atom, default: :sm, values: [:xs, :sm, :md, :lg])
+  attr(:class, :string, default: "")
 
   def invoice_status_badge(assigns) do
     ~H"""

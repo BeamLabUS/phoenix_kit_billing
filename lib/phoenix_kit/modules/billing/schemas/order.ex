@@ -89,53 +89,56 @@ defmodule PhoenixKit.Modules.Billing.Order do
   @valid_payment_methods ~w(bank stripe paypal razorpay)
 
   schema "phoenix_kit_orders" do
-    field :order_number, :string
-    field :status, :string, default: "draft"
-    field :payment_method, :string
+    field(:order_number, :string)
+    field(:status, :string, default: "draft")
+    field(:payment_method, :string)
 
     # Line items (JSONB)
-    field :line_items, {:array, :map}, default: []
+    field(:line_items, {:array, :map}, default: [])
 
     # Financial
-    field :subtotal, :decimal, default: Decimal.new("0")
-    field :tax_amount, :decimal, default: Decimal.new("0")
-    field :tax_rate, :decimal, default: Decimal.new("0")
-    field :discount_amount, :decimal, default: Decimal.new("0")
-    field :discount_code, :string
-    field :total, :decimal
-    field :currency, :string, default: "EUR"
+    field(:subtotal, :decimal, default: Decimal.new("0"))
+    field(:tax_amount, :decimal, default: Decimal.new("0"))
+    field(:tax_rate, :decimal, default: Decimal.new("0"))
+    field(:discount_amount, :decimal, default: Decimal.new("0"))
+    field(:discount_code, :string)
+    field(:total, :decimal)
+    field(:currency, :string, default: "EUR")
 
     # Snapshots
-    field :billing_snapshot, :map, default: %{}
+    field(:billing_snapshot, :map, default: %{})
 
     # Notes
-    field :notes, :string
-    field :internal_notes, :string
+    field(:notes, :string)
+    field(:internal_notes, :string)
 
-    field :metadata, :map, default: %{}
+    field(:metadata, :map, default: %{})
 
     # Timestamps
-    field :confirmed_at, :utc_datetime
-    field :paid_at, :utc_datetime
-    field :cancelled_at, :utc_datetime
+    field(:confirmed_at, :utc_datetime)
+    field(:paid_at, :utc_datetime)
+    field(:cancelled_at, :utc_datetime)
 
     # User reference (cross-package — FK constraint in core migrations)
-    field :user_uuid, UUIDv7
+    field(:user_uuid, UUIDv7)
 
-    belongs_to :user, PhoenixKit.Users.Auth.User,
+    belongs_to(:user, PhoenixKit.Users.Auth.User,
       foreign_key: :user_uuid,
       references: :uuid,
       type: UUIDv7,
       define_field: false
+    )
 
-    belongs_to :billing_profile, BillingProfile,
+    belongs_to(:billing_profile, BillingProfile,
       foreign_key: :billing_profile_uuid,
       references: :uuid,
       type: UUIDv7
+    )
 
-    has_many :invoices, PhoenixKit.Modules.Billing.Invoice,
+    has_many(:invoices, PhoenixKit.Modules.Billing.Invoice,
       foreign_key: :order_uuid,
       references: :uuid
+    )
 
     timestamps(type: :utc_datetime)
   end

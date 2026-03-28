@@ -65,41 +65,42 @@ defmodule PhoenixKit.Modules.Billing.BillingProfile do
   @valid_types ~w(individual company)
 
   schema "phoenix_kit_billing_profiles" do
-    field :type, :string, default: "individual"
-    field :is_default, :boolean, default: false
-    field :name, :string
+    field(:type, :string, default: "individual")
+    field(:is_default, :boolean, default: false)
+    field(:name, :string)
 
     # Individual fields
-    field :first_name, :string
-    field :last_name, :string
-    field :middle_name, :string
-    field :phone, :string
-    field :email, :string
+    field(:first_name, :string)
+    field(:last_name, :string)
+    field(:middle_name, :string)
+    field(:phone, :string)
+    field(:email, :string)
 
     # Company fields (EU Standard)
-    field :company_name, :string
-    field :company_vat_number, :string
-    field :company_registration_number, :string
-    field :company_legal_address, :string
+    field(:company_name, :string)
+    field(:company_vat_number, :string)
+    field(:company_registration_number, :string)
+    field(:company_legal_address, :string)
 
     # Billing address
-    field :address_line1, :string
-    field :address_line2, :string
-    field :city, :string
-    field :state, :string
-    field :postal_code, :string
-    field :country, :string, default: "EE"
+    field(:address_line1, :string)
+    field(:address_line2, :string)
+    field(:city, :string)
+    field(:state, :string)
+    field(:postal_code, :string)
+    field(:country, :string, default: "EE")
 
-    field :metadata, :map, default: %{}
+    field(:metadata, :map, default: %{})
 
     # User reference (cross-package — FK constraint in core migrations)
-    field :user_uuid, UUIDv7
+    field(:user_uuid, UUIDv7)
 
-    belongs_to :user, PhoenixKit.Users.Auth.User,
+    belongs_to(:user, PhoenixKit.Users.Auth.User,
       foreign_key: :user_uuid,
       references: :uuid,
       type: UUIDv7,
       define_field: false
+    )
 
     timestamps(type: :utc_datetime)
   end

@@ -25,9 +25,9 @@ defmodule PhoenixKit.Modules.Billing.Web.Components.TransactionTypeBadge do
       <.transaction_type_badge type="payment" />
       <.transaction_type_badge type="refund" size={:md} />
   """
-  attr :type, :string, required: true
-  attr :size, :atom, default: :sm, values: [:xs, :sm, :md, :lg]
-  attr :class, :string, default: ""
+  attr(:type, :string, required: true)
+  attr(:size, :atom, default: :sm, values: [:xs, :sm, :md, :lg])
+  attr(:class, :string, default: "")
 
   def transaction_type_badge(assigns) do
     ~H"""

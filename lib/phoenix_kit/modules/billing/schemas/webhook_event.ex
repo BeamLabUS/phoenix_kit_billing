@@ -30,14 +30,14 @@ defmodule PhoenixKit.Modules.Billing.WebhookEvent do
   @primary_key {:uuid, UUIDv7, autogenerate: true}
 
   schema "phoenix_kit_webhook_events" do
-    field :provider, :string
-    field :event_id, :string
-    field :event_type, :string
-    field :payload, :map, default: %{}
-    field :processed, :boolean, default: false
-    field :processed_at, :utc_datetime
-    field :error_message, :string
-    field :retry_count, :integer, default: 0
+    field(:provider, :string)
+    field(:event_id, :string)
+    field(:event_type, :string)
+    field(:payload, :map, default: %{})
+    field(:processed, :boolean, default: false)
+    field(:processed_at, :utc_datetime)
+    field(:error_message, :string)
+    field(:retry_count, :integer, default: 0)
 
     timestamps(type: :utc_datetime)
   end

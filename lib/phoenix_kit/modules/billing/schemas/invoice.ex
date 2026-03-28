@@ -66,49 +66,50 @@ defmodule PhoenixKit.Modules.Billing.Invoice do
   @valid_statuses ~w(draft sent paid void overdue)
 
   schema "phoenix_kit_invoices" do
-    field :invoice_number, :string
-    field :status, :string, default: "draft"
+    field(:invoice_number, :string)
+    field(:status, :string, default: "draft")
 
     # Financial
-    field :subtotal, :decimal, default: Decimal.new("0")
-    field :tax_amount, :decimal, default: Decimal.new("0")
-    field :tax_rate, :decimal, default: Decimal.new("0")
-    field :total, :decimal
-    field :paid_amount, :decimal, default: Decimal.new("0")
-    field :currency, :string, default: "EUR"
-    field :due_date, :date
+    field(:subtotal, :decimal, default: Decimal.new("0"))
+    field(:tax_amount, :decimal, default: Decimal.new("0"))
+    field(:tax_rate, :decimal, default: Decimal.new("0"))
+    field(:total, :decimal)
+    field(:paid_amount, :decimal, default: Decimal.new("0"))
+    field(:currency, :string, default: "EUR")
+    field(:due_date, :date)
 
     # Billing details (snapshot)
-    field :billing_details, :map, default: %{}
-    field :line_items, {:array, :map}, default: []
-    field :payment_terms, :string
-    field :bank_details, :map, default: %{}
-    field :notes, :string
+    field(:billing_details, :map, default: %{})
+    field(:line_items, {:array, :map}, default: [])
+    field(:payment_terms, :string)
+    field(:bank_details, :map, default: %{})
+    field(:notes, :string)
 
-    field :metadata, :map, default: %{}
+    field(:metadata, :map, default: %{})
 
     # Receipt (integrated)
-    field :receipt_number, :string
-    field :receipt_generated_at, :utc_datetime
-    field :receipt_data, :map, default: %{}
+    field(:receipt_number, :string)
+    field(:receipt_generated_at, :utc_datetime)
+    field(:receipt_data, :map, default: %{})
 
     # Timestamps
-    field :sent_at, :utc_datetime
-    field :paid_at, :utc_datetime
-    field :voided_at, :utc_datetime
+    field(:sent_at, :utc_datetime)
+    field(:paid_at, :utc_datetime)
+    field(:voided_at, :utc_datetime)
 
     # User reference (cross-package — FK constraint in core migrations)
-    field :user_uuid, UUIDv7
+    field(:user_uuid, UUIDv7)
 
-    belongs_to :user, PhoenixKit.Users.Auth.User,
+    belongs_to(:user, PhoenixKit.Users.Auth.User,
       foreign_key: :user_uuid,
       references: :uuid,
       type: UUIDv7,
       define_field: false
+    )
 
-    belongs_to :order, Order, foreign_key: :order_uuid, references: :uuid, type: UUIDv7
-    field :subscription_uuid, UUIDv7
-    has_many :transactions, Transaction, foreign_key: :invoice_uuid, references: :uuid
+    belongs_to(:order, Order, foreign_key: :order_uuid, references: :uuid, type: UUIDv7)
+    field(:subscription_uuid, UUIDv7)
+    has_many(:transactions, Transaction, foreign_key: :invoice_uuid, references: :uuid)
 
     timestamps(type: :utc_datetime)
   end

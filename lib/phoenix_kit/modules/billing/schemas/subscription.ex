@@ -49,46 +49,49 @@ defmodule PhoenixKit.Modules.Billing.Subscription do
   @primary_key {:uuid, UUIDv7, autogenerate: true}
 
   schema "phoenix_kit_subscriptions" do
-    field :status, :string, default: "active"
+    field(:status, :string, default: "active")
 
     # Billing period
-    field :current_period_start, :utc_datetime
-    field :current_period_end, :utc_datetime
+    field(:current_period_start, :utc_datetime)
+    field(:current_period_end, :utc_datetime)
 
     # Cancellation
-    field :cancel_at_period_end, :boolean, default: false
-    field :cancelled_at, :utc_datetime
+    field(:cancel_at_period_end, :boolean, default: false)
+    field(:cancelled_at, :utc_datetime)
 
     # Trial
-    field :trial_start, :utc_datetime
-    field :trial_end, :utc_datetime
+    field(:trial_start, :utc_datetime)
+    field(:trial_end, :utc_datetime)
 
     # Dunning (failed payment handling)
-    field :grace_period_end, :utc_datetime
-    field :renewal_attempts, :integer, default: 0
-    field :last_renewal_attempt_at, :utc_datetime
+    field(:grace_period_end, :utc_datetime)
+    field(:renewal_attempts, :integer, default: 0)
+    field(:last_renewal_attempt_at, :utc_datetime)
 
     # Metadata
-    field :metadata, :map, default: %{}
+    field(:metadata, :map, default: %{})
 
     # Associations
     # User reference (cross-package — FK constraint in core migrations)
-    field :user_uuid, UUIDv7
+    field(:user_uuid, UUIDv7)
 
-    belongs_to :billing_profile, BillingProfile,
+    belongs_to(:billing_profile, BillingProfile,
       foreign_key: :billing_profile_uuid,
       references: :uuid,
       type: UUIDv7
+    )
 
-    belongs_to :subscription_type, SubscriptionType,
+    belongs_to(:subscription_type, SubscriptionType,
       foreign_key: :subscription_type_uuid,
       references: :uuid,
       type: UUIDv7
+    )
 
-    belongs_to :payment_method, PaymentMethod,
+    belongs_to(:payment_method, PaymentMethod,
       foreign_key: :payment_method_uuid,
       references: :uuid,
       type: UUIDv7
+    )
 
     timestamps(type: :utc_datetime)
   end

@@ -36,27 +36,27 @@ defmodule PhoenixKit.Modules.Billing.PaymentMethod do
   @primary_key {:uuid, UUIDv7, autogenerate: true}
 
   schema "phoenix_kit_payment_methods" do
-    field :provider, :string
-    field :provider_payment_method_id, :string
-    field :provider_customer_id, :string
+    field(:provider, :string)
+    field(:provider_payment_method_id, :string)
+    field(:provider_customer_id, :string)
 
     # Type and display info
-    field :type, :string, default: "card"
-    field :brand, :string
-    field :last4, :string
-    field :exp_month, :integer
-    field :exp_year, :integer
+    field(:type, :string, default: "card")
+    field(:brand, :string)
+    field(:last4, :string)
+    field(:exp_month, :integer)
+    field(:exp_year, :integer)
 
     # Status
-    field :is_default, :boolean, default: false
-    field :status, :string, default: "active"
+    field(:is_default, :boolean, default: false)
+    field(:status, :string, default: "active")
 
     # Metadata
-    field :label, :string
-    field :metadata, :map, default: %{}
+    field(:label, :string)
+    field(:metadata, :map, default: %{})
 
     # User reference (cross-package — FK constraint in core migrations)
-    field :user_uuid, UUIDv7
+    field(:user_uuid, UUIDv7)
 
     timestamps(type: :utc_datetime)
   end

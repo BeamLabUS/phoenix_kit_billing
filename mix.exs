@@ -7,15 +7,24 @@ defmodule PhoenixKitBilling.MixProject do
   def project do
     [
       app: :phoenix_kit_billing,
-      name: "PhoenixKitBilling",
       version: @version,
       elixir: "~> 1.18",
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      aliases: aliases(),
+
+      # Hex
+      description: "Billing module for PhoenixKit — payments, subscriptions, invoices",
       package: package(),
-      docs: docs(),
-      dialyzer: [plt_add_apps: [:phoenix_kit]],
-      description: "Billing module for PhoenixKit — payments, subscriptions, invoices"
+
+      # Dialyzer
+      dialyzer: [plt_add_apps: [:phoenix_kit, :mix]],
+
+      # Docs
+      name: "PhoenixKitBilling",
+      source_url: @source_url,
+      docs: docs()
     ]
   end
 
@@ -23,18 +32,50 @@ defmodule PhoenixKitBilling.MixProject do
     [extra_applications: [:logger]]
   end
 
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
+
+  defp aliases do
+    [
+      quality: ["format", "credo --strict", "dialyzer"],
+      "quality.ci": ["format --check-formatted", "credo --strict", "dialyzer"],
+      precommit: ["compile", "quality"]
+    ]
+  end
+
   defp deps do
     [
+      # PhoenixKit provides the Module behaviour and Settings API.
       {:phoenix_kit, "~> 1.7"},
+
+      # LiveView is needed for the admin pages.
       {:phoenix_live_view, "~> 1.1"},
+
+      # Phoenix web framework (controllers, routing).
       {:phoenix, "~> 1.7"},
+
+      # Ecto for database queries and schemas.
       {:ecto_sql, "~> 3.12"},
+
+      # Background job processing (subscription renewals, dunning).
       {:oban, "~> 2.20"},
+
+      # UUIDv7 primary key generation.
       {:uuidv7, "~> 1.0"},
+
+      # Stripe payment provider.
       {:stripity_stripe, "~> 3.2"},
+
+      # HTTP client for PayPal/Razorpay APIs.
       {:req, "~> 0.5"},
+
+      # JSON encoding/decoding.
       {:jason, "~> 1.4"},
+
+      # Documentation generation.
       {:ex_doc, "~> 0.39", only: :dev, runtime: false},
+
+      # Code quality.
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
     ]
@@ -44,7 +85,7 @@ defmodule PhoenixKitBilling.MixProject do
     [
       licenses: ["MIT"],
       links: %{"GitHub" => @source_url},
-      files: ~w(lib .formatter.exs mix.exs README.md LICENSE)
+      files: ~w(lib .formatter.exs mix.exs README.md CHANGELOG.md LICENSE)
     ]
   end
 

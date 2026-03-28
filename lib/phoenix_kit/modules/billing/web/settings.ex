@@ -12,8 +12,8 @@ defmodule PhoenixKit.Modules.Billing.Web.Settings do
   import PhoenixKitWeb.Components.Core.Icon
 
   alias PhoenixKit.Modules.Billing
-  alias PhoenixKit.Utils.CountryData
   alias PhoenixKit.Settings
+  alias PhoenixKit.Utils.CountryData
 
   @impl true
   def mount(_params, _session, socket) do

@@ -12,9 +12,9 @@ defmodule PhoenixKit.Modules.Billing.Web.BillingProfileForm do
 
   alias PhoenixKit.Modules.Billing
   alias PhoenixKit.Modules.Billing.BillingProfile
-  alias PhoenixKit.Utils.CountryData
   alias PhoenixKit.Settings
   alias PhoenixKit.Users.Auth
+  alias PhoenixKit.Utils.CountryData
   alias PhoenixKit.Utils.Routes
 
   @impl true

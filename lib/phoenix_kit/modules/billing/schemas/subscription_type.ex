@@ -45,18 +45,18 @@ defmodule PhoenixKit.Modules.Billing.SubscriptionType do
   @primary_key {:uuid, UUIDv7, autogenerate: true}
 
   schema "phoenix_kit_subscription_types" do
-    field :name, :string
-    field :slug, :string
-    field :description, :string
-    field :price, :decimal
-    field :currency, :string, default: "EUR"
-    field :interval, :string, default: "month"
-    field :interval_count, :integer, default: 1
-    field :trial_days, :integer, default: 0
-    field :features, {:array, :string}, default: []
-    field :active, :boolean, default: true
-    field :sort_order, :integer, default: 0
-    field :metadata, :map, default: %{}
+    field(:name, :string)
+    field(:slug, :string)
+    field(:description, :string)
+    field(:price, :decimal)
+    field(:currency, :string, default: "EUR")
+    field(:interval, :string, default: "month")
+    field(:interval_count, :integer, default: 1)
+    field(:trial_days, :integer, default: 0)
+    field(:features, {:array, :string}, default: [])
+    field(:active, :boolean, default: true)
+    field(:sort_order, :integer, default: 0)
+    field(:metadata, :map, default: %{})
 
     timestamps(type: :utc_datetime)
   end

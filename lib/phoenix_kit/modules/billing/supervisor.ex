@@ -17,8 +17,10 @@ defmodule PhoenixKit.Modules.Billing.Supervisor do
     Supervisor.start_link(__MODULE__, opts, name: name)
   end
 
+  alias PhoenixKit.Modules.Billing.ApplicationIntegration
+
   def init(_opts) do
-    PhoenixKit.Modules.Billing.ApplicationIntegration.register()
+    ApplicationIntegration.register()
     Supervisor.init([], strategy: :one_for_one)
   end
 

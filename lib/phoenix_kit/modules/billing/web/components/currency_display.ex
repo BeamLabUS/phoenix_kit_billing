@@ -24,11 +24,11 @@ defmodule PhoenixKit.Modules.Billing.Web.Components.CurrencyDisplay do
       <.currency_amount amount={@order.total} currency="USD" />
       <.currency_amount amount={150.00} currency="EUR" show_code={true} />
   """
-  attr :amount, :any, required: true
-  attr :currency, :string, default: "EUR"
-  attr :symbol_position, :atom, default: :before, values: [:before, :after]
-  attr :show_code, :boolean, default: false
-  attr :class, :string, default: ""
+  attr(:amount, :any, required: true)
+  attr(:currency, :string, default: "EUR")
+  attr(:symbol_position, :atom, default: :before, values: [:before, :after])
+  attr(:show_code, :boolean, default: false)
+  attr(:class, :string, default: "")
 
   def currency_amount(assigns) do
     assigns = assign(assigns, :formatted, format_amount(assigns.amount, assigns.currency))
@@ -60,9 +60,9 @@ defmodule PhoenixKit.Modules.Billing.Web.Components.CurrencyDisplay do
       <.currency_compact amount={99.99} />
       <.currency_compact amount={@invoice.total} currency="USD" />
   """
-  attr :amount, :any, required: true
-  attr :currency, :string, default: "EUR"
-  attr :class, :string, default: ""
+  attr(:amount, :any, required: true)
+  attr(:currency, :string, default: "EUR")
+  attr(:class, :string, default: "")
 
   def currency_compact(assigns) do
     assigns = assign(assigns, :formatted, format_amount(assigns.amount, assigns.currency))
@@ -87,9 +87,9 @@ defmodule PhoenixKit.Modules.Billing.Web.Components.CurrencyDisplay do
       <.currency_colored amount={100.00} />
       <.currency_colored amount={-50.00} currency="USD" />
   """
-  attr :amount, :any, required: true
-  attr :currency, :string, default: "EUR"
-  attr :class, :string, default: ""
+  attr(:amount, :any, required: true)
+  attr(:currency, :string, default: "EUR")
+  attr(:class, :string, default: "")
 
   def currency_colored(assigns) do
     assigns =
@@ -118,10 +118,10 @@ defmodule PhoenixKit.Modules.Billing.Web.Components.CurrencyDisplay do
       <.currency_badge code="EUR" />
       <.currency_badge code="USD" name="US Dollar" size={:md} />
   """
-  attr :code, :string, required: true
-  attr :name, :string, default: nil
-  attr :size, :atom, default: :sm, values: [:xs, :sm, :md, :lg]
-  attr :class, :string, default: ""
+  attr(:code, :string, required: true)
+  attr(:name, :string, default: nil)
+  attr(:size, :atom, default: :sm, values: [:xs, :sm, :md, :lg])
+  attr(:class, :string, default: "")
 
   def currency_badge(assigns) do
     assigns =

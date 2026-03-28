@@ -25,7 +25,7 @@ defmodule PhoenixKitBillingTest do
 
   test "admin_tabs returns non-empty list" do
     tabs = Billing.admin_tabs()
-    assert is_list(tabs) and length(tabs) > 0
+    assert is_list(tabs) and tabs != []
   end
 
   test "tab IDs namespaced with admin_billing" do

@@ -1,2 +1,251 @@
-# phoenix_kit_billing
-PhoenixKit Billing Module
+# PhoenixKitBilling
+
+[![Elixir](https://img.shields.io/badge/Elixir-~%3E_1.18-4B275F)](https://elixir-lang.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+Billing module for [PhoenixKit](https://github.com/BeamLabEU/phoenix_kit). Drop-in payments, subscriptions, invoices, orders, and multi-currency support with Stripe, PayPal, and Razorpay integration.
+
+## Features
+
+- **Orders & invoices** — full order-to-invoice-to-receipt workflow with status tracking and print views
+- **Multi-provider payments** — Stripe, PayPal, and Razorpay via a unified Provider behaviour with hosted checkout
+- **Internal subscription control** — subscriptions managed in your database, not by providers; automatic renewals and dunning
+- **Multi-currency** — currency definitions with exchange rates
+- **Billing profiles** — individual and company billing details with address, tax ID, and IBAN validation
+- **Transactions & refunds** — complete payment ledger with credit notes and partial refunds
+- **Real-time updates** — PubSub events for orders, invoices, transactions, subscriptions, and profiles
+- **Admin dashboard** — LiveViews for managing all billing entities, settings, and provider configuration
+- **User dashboard** — "My Orders" and "Billing Profiles" pages for end users
+- **Print views** — invoice, receipt, credit note, and payment confirmation print layouts
+- **Auto-discovery** — implements `PhoenixKit.Module` behaviour; PhoenixKit finds it at startup with zero config
+
+## Installation
+
+Add `phoenix_kit_billing` to your dependencies in `mix.exs`:
+
+```elixir
+def deps do
+  [
+    {:phoenix_kit_billing, "~> 0.1.0"}
+  ]
+end
+```
+
+Then fetch dependencies:
+
+```bash
+mix deps.get
+```
+
+> **Note:** For development or if not yet published to Hex, you can use:
+> ```elixir
+> {:phoenix_kit_billing, github: "BeamLabEU/phoenix_kit_billing"}
+> ```
+
+PhoenixKit auto-discovers the module at startup — no additional configuration needed.
+
+## Quick Start
+
+1. Add the dependency to `mix.exs`
+2. Run `mix deps.get`
+3. Enable the module in admin settings (`billing_enabled: true`)
+4. Configure at least one payment provider in admin settings
+5. Orders and invoices are available at `/admin/billing`
+
+## Usage
+
+### Order-to-Invoice Workflow
+
+```elixir
+alias PhoenixKit.Modules.Billing
+
+# Create an order
+{:ok, order} = Billing.create_order(user, %{
+  line_items: [%{description: "Widget", quantity: 1, unit_price: Decimal.new("29.99")}],
+  currency: "EUR"
+})
+
+# Confirm the order
+{:ok, order} = Billing.confirm_order(order)
+
+# Generate an invoice from the order
+{:ok, invoice} = Billing.create_invoice_from_order(order)
+
+# Send the invoice to the customer
+{:ok, invoice} = Billing.send_invoice(invoice)
+
+# Mark as paid (generates receipt automatically)
+{:ok, invoice} = Billing.mark_invoice_paid(invoice)
+```
+
+### Subscriptions
+
+```elixir
+# Create a subscription type (plan)
+{:ok, type} = Billing.create_subscription_type(%{
+  name: "Pro Monthly",
+  interval: "month",
+  price: Decimal.new("19.99"),
+  currency: "EUR"
+})
+
+# Create a subscription for a user
+{:ok, subscription} = Billing.create_subscription(user, type)
+```
+
+Subscription renewals and failed-payment retries (dunning) are handled automatically by Oban workers.
+
+### Payment Providers
+
+Providers are configured in admin settings. The system uses hosted checkout — users are redirected to the provider's payment page:
+
+```elixir
+# Create a checkout session for an invoice
+{:ok, session} = Billing.create_checkout_session(invoice, :stripe, %{
+  success_url: "https://example.com/success",
+  cancel_url: "https://example.com/cancel"
+})
+
+# Redirect user to session.url
+```
+
+Webhooks are handled automatically at `/webhooks/billing/:provider`.
+
+### Real-Time Events
+
+Subscribe to billing events in your LiveViews:
+
+```elixir
+def mount(_params, _session, socket) do
+  PhoenixKit.Modules.Billing.Events.subscribe_orders()
+  {:ok, socket}
+end
+
+def handle_info({:order_created, order}, socket) do
+  # Update UI
+  {:noreply, socket}
+end
+```
+
+### Settings
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| `billing_enabled` | boolean | `false` | Enable/disable the billing system |
+| `billing_default_currency` | string | `"EUR"` | Default currency for new orders |
+| `billing_tax_enabled` | boolean | `false` | Enable tax calculations |
+| `billing_company_name` | string | — | Company name on invoices |
+| `billing_company_address` | string | — | Company address on invoices |
+
+Provider-specific settings (API keys, webhook secrets) are configured per-provider in the admin panel at `/admin/settings/billing/providers`.
+
+### Invoice Status Workflow
+
+| Status | Description |
+|--------|-------------|
+| `"draft"` | Invoice created, not yet sent |
+| `"sent"` | Invoice sent to customer |
+| `"paid"` | Payment received, receipt generated |
+| `"overdue"` | Past due date, not yet paid |
+| `"void"` | Cancelled / voided |
+
+```
+draft → sent → paid
+            ↘
+           overdue → paid
+            ↘
+            void
+```
+
+### Permissions
+
+The module declares permissions via `permission_metadata/0`:
+
+- `"billing"` — access to billing admin dashboard and all sub-pages
+- Settings pages require the same `"billing"` permission
+
+Use `Scope.has_module_access?/2` to check permissions in your application.
+
+### CSS Requirements
+
+This module implements `css_sources/0` returning `[:phoenix_kit_billing]`, so PhoenixKit's installer automatically adds the correct `@source` directive to your `app.css` for Tailwind scanning. No manual configuration needed.
+
+## Architecture
+
+```
+lib/
+├── mix/tasks/phoenix_kit_billing.install.ex  # Install mix task
+└── phoenix_kit/modules/billing/
+    ├── billing.ex                    # Main module (context + PhoenixKit.Module behaviour)
+    ├── events.ex                     # PubSub event broadcasts
+    ├── paths.ex                      # Centralized URL path helpers
+    ├── supervisor.ex                 # OTP Supervisor
+    ├── providers/
+    │   ├── provider.ex               # Provider behaviour (9 callbacks)
+    │   ├── providers.ex              # Provider registry and routing
+    │   ├── stripe.ex                 # Stripe implementation
+    │   ├── paypal.ex                 # PayPal implementation
+    │   └── razorpay.ex               # Razorpay implementation
+    ├── schemas/
+    │   ├── billing_profile.ex        # User billing information
+    │   ├── currency.ex               # Currency definitions
+    │   ├── invoice.ex                # Invoice with receipt
+    │   ├── order.ex                  # Order with line items
+    │   ├── payment_method.ex         # Saved payment methods
+    │   ├── subscription.ex           # Subscription records
+    │   ├── subscription_type.ex      # Subscription plan definitions
+    │   ├── transaction.ex            # Payment/refund transactions
+    │   └── webhook_event.ex          # Provider webhook log
+    ├── workers/
+    │   ├── subscription_renewal_worker.ex   # Oban: subscription renewals
+    │   └── subscription_dunning_worker.ex   # Oban: failed payment retries
+    └── web/                          # Admin LiveViews, controllers, components
+```
+
+### Database Tables
+
+| Table | Description |
+|-------|-------------|
+| `phoenix_kit_billing_profiles` | User billing information (UUIDv7 PK) |
+| `phoenix_kit_currencies` | Currency definitions |
+| `phoenix_kit_orders` | Orders with line items |
+| `phoenix_kit_invoices` | Invoices with receipt data |
+| `phoenix_kit_transactions` | Payment/refund transaction ledger |
+| `phoenix_kit_subscriptions` | Active subscriptions |
+| `phoenix_kit_subscription_types` | Subscription plan definitions |
+| `phoenix_kit_payment_methods` | Saved payment methods from providers |
+| `phoenix_kit_payment_options` | Available payment options |
+| `phoenix_kit_webhook_events` | Provider webhook event log |
+
+## Development
+
+```bash
+mix deps.get       # Install dependencies
+mix test           # Run tests
+mix format         # Format code
+mix credo --strict # Static analysis (strict mode)
+mix dialyzer       # Type checking
+mix docs           # Generate documentation
+mix precommit      # Compile + format + credo + dialyzer
+mix quality        # Format + credo + dialyzer
+```
+
+## Troubleshooting
+
+### Billing not appearing in admin
+- Verify `billing_enabled` is `true` in settings
+- Ensure the module is listed as a dependency in the parent app's `mix.exs`
+- Check that `enabled?/0` is not returning `false` (requires database access)
+
+### Webhooks not processing
+- Verify webhook secrets are configured in provider settings
+- Check that webhook URLs are registered with the provider (e.g., `https://yourdomain.com/webhooks/billing/stripe`)
+- Review `phoenix_kit_webhook_events` table for received events
+
+### Subscription renewals not running
+- Ensure Oban is configured in the parent app with the `billing` queue
+- Check Oban dashboard for failed jobs
+
+## License
+
+MIT — see [LICENSE](LICENSE) for details.

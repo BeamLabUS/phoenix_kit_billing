@@ -245,9 +245,10 @@ defmodule PhoenixKit.Modules.Billing.WebhookProcessor do
     import Ecto.Query
 
     query =
-      from we in WebhookEvent,
+      from(we in WebhookEvent,
         where: we.provider == ^to_string(provider) and we.event_id == ^event_id,
         select: we.uuid
+      )
 
     case repo.one(query) do
       nil -> :new
@@ -295,8 +296,9 @@ defmodule PhoenixKit.Modules.Billing.WebhookProcessor do
       end
 
     query =
-      from we in "phoenix_kit_webhook_events",
+      from(we in "phoenix_kit_webhook_events",
         where: we.id == ^id
+      )
 
     repo.update_all(query,
       set: [

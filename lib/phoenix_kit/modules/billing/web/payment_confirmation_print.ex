@@ -11,9 +11,9 @@ defmodule PhoenixKit.Modules.Billing.Web.PaymentConfirmationPrint do
   alias PhoenixKit.Utils.Routes
 
   alias PhoenixKit.Modules.Billing
-  alias PhoenixKit.Utils.CountryData
   alias PhoenixKit.Modules.Billing.Transaction
   alias PhoenixKit.Settings
+  alias PhoenixKit.Utils.CountryData
   alias PhoenixKit.Utils.Routes
 
   @impl true

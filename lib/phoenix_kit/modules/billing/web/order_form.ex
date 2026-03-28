@@ -10,10 +10,10 @@ defmodule PhoenixKit.Modules.Billing.Web.OrderForm do
   import PhoenixKitWeb.Components.Core.Icon
 
   alias PhoenixKit.Modules.Billing
-  alias PhoenixKit.Utils.CountryData
   alias PhoenixKit.Modules.Billing.Order
   alias PhoenixKit.Settings
   alias PhoenixKit.Users.Auth
+  alias PhoenixKit.Utils.CountryData
   alias PhoenixKit.Utils.Routes
 
   @impl true

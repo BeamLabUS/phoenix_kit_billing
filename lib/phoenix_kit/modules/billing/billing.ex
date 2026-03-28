@@ -46,7 +46,6 @@ defmodule PhoenixKit.Modules.Billing do
 
   alias PhoenixKit.Dashboard.Tab
   alias PhoenixKit.Modules.Billing.BillingProfile
-  alias PhoenixKit.Utils.CountryData
   alias PhoenixKit.Modules.Billing.Currency
   alias PhoenixKit.Modules.Billing.Events
   alias PhoenixKit.Modules.Billing.Invoice
@@ -55,6 +54,7 @@ defmodule PhoenixKit.Modules.Billing do
   alias PhoenixKit.Modules.Billing.Providers
   alias PhoenixKit.Modules.Billing.Transaction
   alias PhoenixKit.Settings
+  alias PhoenixKit.Utils.CountryData
   alias PhoenixKit.Utils.Date, as: UtilsDate
   alias PhoenixKit.Utils.UUID, as: UUIDUtils
 
@@ -1882,6 +1882,7 @@ defmodule PhoenixKit.Modules.Billing do
   # Uses apply/3 to avoid compile-time warnings when phoenix_kit_emails is not installed.
   defp send_email_if_available(template, email, variables, opts) do
     if Code.ensure_loaded?(PhoenixKit.Modules.Emails) do
+      # credo:disable-for-next-line Credo.Check.Refactor.Apply
       apply(PhoenixKit.Modules.Emails.Templates, :send_email, [template, email, variables, opts])
     else
       :ok

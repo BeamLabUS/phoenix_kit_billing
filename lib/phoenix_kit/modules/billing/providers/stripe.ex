@@ -643,13 +643,14 @@ defmodule PhoenixKit.Modules.Billing.Providers.Stripe do
     import Ecto.Query
 
     query =
-      from pm in PhoenixKit.Modules.Billing.PaymentMethod,
+      from(pm in PhoenixKit.Modules.Billing.PaymentMethod,
         where: pm.user_uuid == ^user_uuid,
         where: pm.provider == "stripe",
         where: not is_nil(pm.provider_customer_id),
         where: pm.status == "active",
         select: pm.provider_customer_id,
         limit: 1
+      )
 
     PhoenixKit.RepoHelper.repo().one(query)
   end

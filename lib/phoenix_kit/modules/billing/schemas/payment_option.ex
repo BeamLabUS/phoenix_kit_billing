@@ -28,25 +28,25 @@ defmodule PhoenixKit.Modules.Billing.PaymentOption do
 
   schema "phoenix_kit_payment_options" do
     # Identity
-    field :name, :string
-    field :code, :string
-    field :type, :string, default: "offline"
+    field(:name, :string)
+    field(:code, :string)
+    field(:type, :string, default: "offline")
 
     # Provider (for online payments)
-    field :provider, :string
+    field(:provider, :string)
 
     # Display
-    field :description, :string
-    field :instructions, :string
-    field :icon, :string, default: "hero-banknotes"
+    field(:description, :string)
+    field(:instructions, :string)
+    field(:icon, :string, default: "hero-banknotes")
 
     # Configuration
-    field :active, :boolean, default: false
-    field :position, :integer, default: 0
-    field :requires_billing_profile, :boolean, default: true
+    field(:active, :boolean, default: false)
+    field(:position, :integer, default: 0)
+    field(:requires_billing_profile, :boolean, default: true)
 
     # Additional settings
-    field :settings, :map, default: %{}
+    field(:settings, :map, default: %{})
 
     timestamps(type: :utc_datetime)
   end

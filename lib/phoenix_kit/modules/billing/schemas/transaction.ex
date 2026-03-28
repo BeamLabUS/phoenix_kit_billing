@@ -24,20 +24,20 @@ defmodule PhoenixKit.Modules.Billing.Transaction do
   @primary_key {:uuid, UUIDv7, autogenerate: true}
 
   schema "phoenix_kit_transactions" do
-    field :transaction_number, :string
-    field :amount, :decimal
-    field :currency, :string, default: "EUR"
-    field :payment_method, :string, default: "bank"
-    field :description, :string
-    field :metadata, :map, default: %{}
+    field(:transaction_number, :string)
+    field(:amount, :decimal)
+    field(:currency, :string, default: "EUR")
+    field(:payment_method, :string, default: "bank")
+    field(:description, :string)
+    field(:metadata, :map, default: %{})
 
     # For future payment provider integrations
-    field :provider_transaction_id, :string
-    field :provider_data, :map, default: %{}
+    field(:provider_transaction_id, :string)
+    field(:provider_data, :map, default: %{})
 
-    belongs_to :invoice, Invoice, foreign_key: :invoice_uuid, references: :uuid, type: UUIDv7
+    belongs_to(:invoice, Invoice, foreign_key: :invoice_uuid, references: :uuid, type: UUIDv7)
     # User reference (cross-package — FK constraint in core migrations)
-    field :user_uuid, UUIDv7
+    field(:user_uuid, UUIDv7)
 
     timestamps(type: :utc_datetime)
   end

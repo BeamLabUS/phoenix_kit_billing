@@ -35,14 +35,14 @@ defmodule PhoenixKit.Modules.Billing.Currency do
   @primary_key {:uuid, UUIDv7, autogenerate: true}
 
   schema "phoenix_kit_currencies" do
-    field :code, :string
-    field :name, :string
-    field :symbol, :string
-    field :decimal_places, :integer, default: 2
-    field :is_default, :boolean, default: false
-    field :enabled, :boolean, default: true
-    field :exchange_rate, :decimal, default: Decimal.new("1.0")
-    field :sort_order, :integer, default: 0
+    field(:code, :string)
+    field(:name, :string)
+    field(:symbol, :string)
+    field(:decimal_places, :integer, default: 2)
+    field(:is_default, :boolean, default: false)
+    field(:enabled, :boolean, default: true)
+    field(:exchange_rate, :decimal, default: Decimal.new("1.0"))
+    field(:sort_order, :integer, default: 0)
 
     timestamps(type: :utc_datetime)
   end

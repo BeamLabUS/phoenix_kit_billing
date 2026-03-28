@@ -30,9 +30,9 @@ defmodule PhoenixKit.Modules.Billing.Web.Components.OrderStatusBadge do
       <.order_status_badge status="pending" size={:md} />
       <.order_status_badge status={@order.status} class="ml-2" />
   """
-  attr :status, :string, required: true
-  attr :size, :atom, default: :sm, values: [:xs, :sm, :md, :lg]
-  attr :class, :string, default: ""
+  attr(:status, :string, required: true)
+  attr(:size, :atom, default: :sm, values: [:xs, :sm, :md, :lg])
+  attr(:class, :string, default: "")
 
   def order_status_badge(assigns) do
     ~H"""
