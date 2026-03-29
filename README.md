@@ -57,7 +57,7 @@ PhoenixKit auto-discovers the module at startup — no additional configuration 
 ### Order-to-Invoice Workflow
 
 ```elixir
-alias PhoenixKit.Modules.Billing
+alias PhoenixKitBilling
 
 # Create an order
 {:ok, order} = Billing.create_order(user, %{
@@ -117,7 +117,7 @@ Subscribe to billing events in your LiveViews:
 
 ```elixir
 def mount(_params, _session, socket) do
-  PhoenixKit.Modules.Billing.Events.subscribe_orders()
+  PhoenixKitBilling.Events.subscribe_orders()
   {:ok, socket}
 end
 
@@ -174,9 +174,10 @@ This module implements `css_sources/0` returning `[:phoenix_kit_billing]`, so Ph
 
 ```
 lib/
-├── mix/tasks/phoenix_kit_billing.install.ex  # Install mix task
-└── phoenix_kit/modules/billing/
-    ├── billing.ex                    # Main module (context + PhoenixKit.Module behaviour)
+├── phoenix_kit_billing.ex                    # Main module (context + PhoenixKit.Module behaviour)
+└── phoenix_kit_billing/
+    ├── mix_tasks/
+    │   └── phoenix_kit_billing.install.ex    # Install mix task
     ├── events.ex                     # PubSub event broadcasts
     ├── paths.ex                      # Centralized URL path helpers
     ├── supervisor.ex                 # OTP Supervisor

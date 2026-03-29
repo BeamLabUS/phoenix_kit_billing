@@ -1,7 +1,7 @@
 defmodule PhoenixKitBillingTest do
   use ExUnit.Case, async: true
 
-  alias PhoenixKit.Modules.Billing
+  alias PhoenixKitBilling, as: Billing
 
   test "has @phoenix_kit_module attribute" do
     assert Keyword.get(Billing.__info__(:attributes), :phoenix_kit_module) == [true]

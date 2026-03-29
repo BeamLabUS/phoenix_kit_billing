@@ -119,9 +119,10 @@ draft → sent → paid
 
 ```
 lib/
-├── mix/tasks/phoenix_kit_billing.install.ex  # Install mix task
-└── phoenix_kit/modules/billing/
-    ├── billing.ex                    # Main module (PhoenixKit.Module behaviour + context)
+├── phoenix_kit_billing.ex                    # Main module (PhoenixKit.Module behaviour + context)
+└── phoenix_kit_billing/
+    ├── mix_tasks/
+    │   └── phoenix_kit_billing.install.ex    # Install mix task
     ├── application_integration.ex    # Provider registration on startup
     ├── events.ex                     # PubSub event broadcasts
     ├── paths.ex                      # Centralized URL path helpers
