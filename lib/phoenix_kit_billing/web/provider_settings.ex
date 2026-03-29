@@ -11,10 +11,10 @@ defmodule PhoenixKitBilling.Web.ProviderSettings do
   alias PhoenixKit.Utils.Routes
   import PhoenixKitWeb.Components.Core.Icon
 
-  alias PhoenixKitBilling, as: Billing
-  alias PhoenixKitBilling.Providers
   alias PhoenixKit.Settings
   alias PhoenixKit.Utils.Routes
+  alias PhoenixKitBilling, as: Billing
+  alias PhoenixKitBilling.Providers
 
   @impl true
   def mount(_params, _session, socket) do

@@ -18,9 +18,9 @@ defmodule PhoenixKitBilling.Web.Index do
   import PhoenixKitBilling.Web.Components.InvoiceStatusBadge
   import PhoenixKitBilling.Web.Components.OrderStatusBadge
 
-  alias PhoenixKitBilling, as: Billing
   alias PhoenixKit.Settings
   alias PhoenixKit.Utils.Routes
+  alias PhoenixKitBilling, as: Billing
 
   @impl true
   def mount(_params, _session, socket) do

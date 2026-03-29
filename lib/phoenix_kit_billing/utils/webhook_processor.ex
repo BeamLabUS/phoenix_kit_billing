@@ -24,10 +24,10 @@ defmodule PhoenixKitBilling.WebhookProcessor do
       WebhookProcessor.process(normalized_event)
   """
 
-  alias PhoenixKitBilling, as: Billing
-  alias PhoenixKitBilling.WebhookEvent
   alias PhoenixKit.RepoHelper
   alias PhoenixKit.Utils.Date, as: UtilsDate
+  alias PhoenixKitBilling, as: Billing
+  alias PhoenixKitBilling.WebhookEvent
 
   require Logger
 

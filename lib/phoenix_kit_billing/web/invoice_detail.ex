@@ -18,12 +18,12 @@ defmodule PhoenixKitBilling.Web.InvoiceDetail do
   import PhoenixKitBilling.Web.Components.TransactionTypeBadge
   import PhoenixKitBilling.Web.Components.OrderStatusBadge
 
+  alias PhoenixKit.Settings
+  alias PhoenixKit.Utils.Routes
   alias PhoenixKitBilling, as: Billing
   alias PhoenixKitBilling.Invoice
   alias PhoenixKitBilling.Providers
   alias PhoenixKitBilling.Web.InvoiceDetail.Actions
-  alias PhoenixKit.Settings
-  alias PhoenixKit.Utils.Routes
 
   import PhoenixKitBilling.Web.InvoiceDetail.Helpers
 

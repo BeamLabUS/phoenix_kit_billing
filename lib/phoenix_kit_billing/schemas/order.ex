@@ -80,9 +80,9 @@ defmodule PhoenixKitBilling.Order do
   import Ecto.Changeset
   import Ecto.Query, warn: false
 
-  alias PhoenixKitBilling.BillingProfile
   alias PhoenixKit.Utils.CountryData
   alias PhoenixKit.Utils.Date, as: UtilsDate
+  alias PhoenixKitBilling.BillingProfile
 
   @primary_key {:uuid, UUIDv7, autogenerate: true}
   @valid_statuses ~w(draft pending confirmed paid cancelled refunded)

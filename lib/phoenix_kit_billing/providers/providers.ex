@@ -26,9 +26,9 @@ defmodule PhoenixKitBilling.Providers do
       #=> true
   """
 
+  alias PhoenixKit.Settings
   alias PhoenixKitBilling.Providers.Provider
   alias PhoenixKitBilling.Providers.Types.ProviderInfo
-  alias PhoenixKit.Settings
 
   @providers %{
     stripe: PhoenixKitBilling.Providers.Stripe,

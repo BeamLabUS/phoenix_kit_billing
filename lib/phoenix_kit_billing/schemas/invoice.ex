@@ -58,9 +58,9 @@ defmodule PhoenixKitBilling.Invoice do
   import Ecto.Changeset
   import Ecto.Query, warn: false
 
+  alias PhoenixKit.Utils.Date, as: UtilsDate
   alias PhoenixKitBilling.Order
   alias PhoenixKitBilling.Transaction
-  alias PhoenixKit.Utils.Date, as: UtilsDate
 
   @primary_key {:uuid, UUIDv7, autogenerate: true}
   @valid_statuses ~w(draft sent paid void overdue)

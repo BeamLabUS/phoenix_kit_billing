@@ -28,9 +28,9 @@ defmodule PhoenixKitBilling.Web.WebhookController do
   use Phoenix.Controller,
     formats: [:json]
 
+  alias PhoenixKit.Settings
   alias PhoenixKitBilling.Providers
   alias PhoenixKitBilling.WebhookProcessor
-  alias PhoenixKit.Settings
 
   require Logger
 

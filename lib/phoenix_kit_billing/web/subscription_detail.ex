@@ -14,10 +14,10 @@ defmodule PhoenixKitBilling.Web.SubscriptionDetail do
   import PhoenixKitWeb.Components.Core.TimeDisplay
   import PhoenixKitBilling.Web.Components.CurrencyDisplay
 
-  alias PhoenixKitBilling, as: Billing
-  alias PhoenixKitBilling.Subscription
   alias PhoenixKit.Settings
   alias PhoenixKit.Utils.Routes
+  alias PhoenixKitBilling, as: Billing
+  alias PhoenixKitBilling.Subscription
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do

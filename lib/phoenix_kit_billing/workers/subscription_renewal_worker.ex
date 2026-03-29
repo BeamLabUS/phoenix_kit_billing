@@ -50,12 +50,12 @@ defmodule PhoenixKitBilling.Workers.SubscriptionRenewalWorker do
     max_attempts: 3,
     unique: [period: 3600]
 
-  alias PhoenixKitBilling, as: Billing
-  alias PhoenixKitBilling.{PaymentMethod, Providers, Subscription, SubscriptionType}
-  alias PhoenixKitBilling.Workers.SubscriptionDunningWorker
   alias PhoenixKit.RepoHelper
   alias PhoenixKit.Settings
   alias PhoenixKit.Utils.Date, as: UtilsDate
+  alias PhoenixKitBilling, as: Billing
+  alias PhoenixKitBilling.{PaymentMethod, Providers, Subscription, SubscriptionType}
+  alias PhoenixKitBilling.Workers.SubscriptionDunningWorker
 
   require Logger
 

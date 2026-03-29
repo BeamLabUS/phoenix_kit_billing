@@ -16,9 +16,9 @@ defmodule PhoenixKitBilling.Web.OrderDetail do
   import PhoenixKitBilling.Web.Components.InvoiceStatusBadge
   import PhoenixKitBilling.Web.Components.OrderStatusBadge
 
-  alias PhoenixKitBilling, as: Billing
   alias PhoenixKit.Settings
   alias PhoenixKit.Utils.Routes
+  alias PhoenixKitBilling, as: Billing
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do

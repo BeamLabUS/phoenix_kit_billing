@@ -10,10 +10,10 @@ defmodule PhoenixKitBilling.Web.SubscriptionTypeForm do
   import PhoenixKitWeb.Components.Core.Icon
   import PhoenixKitBilling.Web.Components.CurrencyDisplay
 
-  alias PhoenixKitBilling, as: Billing
-  alias PhoenixKitBilling.SubscriptionType
   alias PhoenixKit.Settings
   alias PhoenixKit.Utils.Routes
+  alias PhoenixKitBilling, as: Billing
+  alias PhoenixKitBilling.SubscriptionType
 
   @impl true
   def mount(params, _session, socket) do

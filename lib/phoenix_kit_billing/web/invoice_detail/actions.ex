@@ -9,8 +9,8 @@ defmodule PhoenixKitBilling.Web.InvoiceDetail.Actions do
 
   import Phoenix.LiveView, only: [put_flash: 3, redirect: 2]
 
-  alias PhoenixKitBilling, as: Billing
   alias PhoenixKit.Utils.Routes
+  alias PhoenixKitBilling, as: Billing
 
   def record_payment(socket) do
     %{

@@ -45,6 +45,10 @@ defmodule PhoenixKitBilling do
   import Ecto.Query, warn: false
 
   alias PhoenixKit.Dashboard.Tab
+  alias PhoenixKit.Settings
+  alias PhoenixKit.Utils.CountryData
+  alias PhoenixKit.Utils.Date, as: UtilsDate
+  alias PhoenixKit.Utils.UUID, as: UUIDUtils
   alias PhoenixKitBilling.BillingProfile
   alias PhoenixKitBilling.Currency
   alias PhoenixKitBilling.Events
@@ -53,10 +57,6 @@ defmodule PhoenixKitBilling do
   alias PhoenixKitBilling.PaymentOption
   alias PhoenixKitBilling.Providers
   alias PhoenixKitBilling.Transaction
-  alias PhoenixKit.Settings
-  alias PhoenixKit.Utils.CountryData
-  alias PhoenixKit.Utils.Date, as: UtilsDate
-  alias PhoenixKit.Utils.UUID, as: UUIDUtils
 
   # ============================================
   # SYSTEM ENABLE/DISABLE

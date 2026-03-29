@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.1.1] - 2026-03-29
+
+### Changed
+
+- Restructured to flat `lib/phoenix_kit_billing/` layout with `PhoenixKitBilling` namespace
+- Added `.gitignore` for clean repository tracking
+
+### Fixed
+
+- Sorted alias declarations alphabetically across 33 files to satisfy Credo strict mode
+
 ## [0.1.0] - 2026-03-28
 
 ### Added

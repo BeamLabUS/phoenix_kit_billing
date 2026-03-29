@@ -15,10 +15,10 @@ defmodule PhoenixKitBilling.Web.Transactions do
   import PhoenixKitBilling.Web.Components.CurrencyDisplay
   import PhoenixKitBilling.Web.Components.TransactionTypeBadge
 
-  alias PhoenixKitBilling, as: Billing
-  alias PhoenixKitBilling.Transaction
   alias PhoenixKit.Settings
   alias PhoenixKit.Utils.Routes
+  alias PhoenixKitBilling, as: Billing
+  alias PhoenixKitBilling.Transaction
 
   @default_per_page 25
 

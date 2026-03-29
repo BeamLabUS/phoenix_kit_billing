@@ -11,9 +11,9 @@ defmodule PhoenixKitBilling.Web.Settings do
   import PhoenixKitWeb.Components.Core.AdminPageHeader
   import PhoenixKitWeb.Components.Core.Icon
 
-  alias PhoenixKitBilling, as: Billing
   alias PhoenixKit.Settings
   alias PhoenixKit.Utils.CountryData
+  alias PhoenixKitBilling, as: Billing
 
   @impl true
   def mount(_params, _session, socket) do

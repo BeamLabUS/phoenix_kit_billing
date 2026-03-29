@@ -9,12 +9,12 @@ defmodule PhoenixKitBilling.Web.OrderForm do
   alias PhoenixKit.Utils.Routes
   import PhoenixKitWeb.Components.Core.Icon
 
-  alias PhoenixKitBilling, as: Billing
-  alias PhoenixKitBilling.Order
   alias PhoenixKit.Settings
   alias PhoenixKit.Users.Auth
   alias PhoenixKit.Utils.CountryData
   alias PhoenixKit.Utils.Routes
+  alias PhoenixKitBilling, as: Billing
+  alias PhoenixKitBilling.Order
 
   @impl true
   def mount(params, _session, socket) do

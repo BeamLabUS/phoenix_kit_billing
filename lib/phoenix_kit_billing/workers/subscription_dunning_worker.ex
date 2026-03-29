@@ -43,10 +43,10 @@ defmodule PhoenixKitBilling.Workers.SubscriptionDunningWorker do
     max_attempts: 5,
     unique: [period: 3600, keys: [:subscription_uuid]]
 
-  alias PhoenixKitBilling.{PaymentMethod, Providers, Subscription, SubscriptionType}
   alias PhoenixKit.RepoHelper
   alias PhoenixKit.Settings
   alias PhoenixKit.Utils.Date, as: UtilsDate
+  alias PhoenixKitBilling.{PaymentMethod, Providers, Subscription, SubscriptionType}
 
   require Logger
 

@@ -11,9 +11,9 @@ defmodule PhoenixKitBilling.Web.UserBillingProfiles do
   import PhoenixKitWeb.LayoutHelpers, only: [dashboard_assigns: 1]
   import PhoenixKitWeb.Components.Core.Icon
 
+  alias PhoenixKit.Utils.Routes
   alias PhoenixKitBilling, as: Billing
   alias PhoenixKitBilling.Events
-  alias PhoenixKit.Utils.Routes
 
   @impl true
   def mount(_params, _session, socket) do

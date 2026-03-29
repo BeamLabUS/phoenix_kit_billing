@@ -41,8 +41,8 @@ defmodule PhoenixKitBilling.Subscription do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias PhoenixKitBilling.{BillingProfile, PaymentMethod, SubscriptionType}
   alias PhoenixKit.Utils.Date, as: UtilsDate
+  alias PhoenixKitBilling.{BillingProfile, PaymentMethod, SubscriptionType}
 
   @statuses ~w(trialing active past_due paused cancelled)
 

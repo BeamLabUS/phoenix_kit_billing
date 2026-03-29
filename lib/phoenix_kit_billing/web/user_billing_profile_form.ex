@@ -10,10 +10,10 @@ defmodule PhoenixKitBilling.Web.UserBillingProfileForm do
   import PhoenixKitWeb.Components.Core.Icon
   import PhoenixKitWeb.Components.Core.FormFieldError
 
-  alias PhoenixKitBilling, as: Billing
-  alias PhoenixKitBilling.BillingProfile
   alias PhoenixKit.Utils.CountryData
   alias PhoenixKit.Utils.Routes
+  alias PhoenixKitBilling, as: Billing
+  alias PhoenixKitBilling.BillingProfile
 
   @impl true
   def mount(params, _session, socket) do
