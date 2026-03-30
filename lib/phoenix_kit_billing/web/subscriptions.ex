@@ -63,7 +63,7 @@ defmodule PhoenixKitBilling.Web.Subscriptions do
 
   defp load_subscriptions(socket) do
     opts =
-      [preload: [:subscription_type, :payment_method]]
+      [preload: [:subscription_type, :payment_method, :user]]
       |> add_status_filter(socket.assigns.status_filter)
       |> add_search_filter(socket.assigns.search)
 
