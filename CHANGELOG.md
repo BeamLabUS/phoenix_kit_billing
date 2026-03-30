@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Backward-compatible compat modules for `PhoenixKit.Modules.Billing.*` namespace
 - Shared `SubscriptionHelpers` module for `status_badge_class/1` and `format_interval/2`
 - Confirmation dialogs on destructive subscription actions (pause, cancel)
+- Public tax rate API: `tax_enabled?/0`, `get_tax_rate/0`, `get_tax_rate_percent/0` for cross-module use
 
 ### Fixed
 
@@ -25,6 +26,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Hardcoded `"EUR"` fallback in `create_subscription` now uses `billing_default_currency` setting
 - Added `last_renewal_error` to subscription changeset cast list
 - Cancel flash message in edit form now correctly says "will be cancelled at period end"
+- `get_tax_rate_percent/0` now respects `tax_enabled?` flag
+- `get_tax_rate/0` handles non-numeric settings values without crashing
+- `get_config/0` uses `tax_enabled?/0` instead of inlining the check
 
 ### Changed
 
