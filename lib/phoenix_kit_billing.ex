@@ -309,6 +309,40 @@ defmodule PhoenixKitBilling do
   end
 
   @doc """
+  Returns whether tax is enabled in billing settings.
+  """
+  def tax_enabled? do
+    Settings.get_setting_cached("billing_tax_enabled", "false") == "true"
+  end
+
+  @doc """
+  Returns the default tax rate as a Decimal (e.g., Decimal.new("0.20") for 20%).
+
+  Uses the billing settings value. When company country is configured,
+  the suggested rate from BeamLabCountries can be applied via billing settings UI.
+  """
+  def get_tax_rate do
+    if tax_enabled?() do
+      rate = Settings.get_setting_cached("billing_default_tax_rate", "0")
+      Decimal.div(Decimal.new(rate), Decimal.new("100"))
+    else
+      Decimal.new("0")
+    end
+  end
+
+  @doc """
+  Returns the default tax rate as integer percentage (e.g., 20 for 20%).
+  """
+  def get_tax_rate_percent do
+    rate = Settings.get_setting_cached("billing_default_tax_rate", "0")
+
+    case Integer.parse(rate) do
+      {value, _} -> value
+      :error -> 0
+    end
+  end
+
+  @doc """
   Returns dashboard statistics.
   """
   def get_dashboard_stats do

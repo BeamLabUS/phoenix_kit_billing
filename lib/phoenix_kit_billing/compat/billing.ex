@@ -8,6 +8,10 @@ defmodule PhoenixKit.Modules.Billing do
   """
 
   defdelegate enabled?(), to: PhoenixKitBilling
+  defdelegate tax_enabled?(), to: PhoenixKitBilling
+  defdelegate get_tax_rate(), to: PhoenixKitBilling
+  defdelegate get_tax_rate_percent(), to: PhoenixKitBilling
+  defdelegate get_config(), to: PhoenixKitBilling
   defdelegate list_billing_profiles_with_count(opts), to: PhoenixKitBilling
   defdelegate get_invoice(id, opts), to: PhoenixKitBilling
   defdelegate list_invoice_transactions(uuid), to: PhoenixKitBilling
