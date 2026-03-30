@@ -115,6 +115,11 @@ defmodule PhoenixKitBilling.Web.BillingProfiles do
   end
 
   @impl true
+  def handle_event("edit_profile", %{"uuid" => uuid}, socket) do
+    {:noreply, push_navigate(socket, to: Routes.path("/admin/billing/profiles/#{uuid}/edit"))}
+  end
+
+  @impl true
   def handle_event("clear_filters", _params, socket) do
     {:noreply, push_patch(socket, to: Routes.path("/admin/billing/profiles"))}
   end

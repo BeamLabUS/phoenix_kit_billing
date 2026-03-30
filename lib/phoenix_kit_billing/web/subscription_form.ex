@@ -74,7 +74,12 @@ defmodule PhoenixKitBilling.Web.SubscriptionForm do
         {:noreply, put_flash(socket, :error, "User not found")}
 
       user ->
-        payment_methods = Billing.list_payment_methods(user.uuid, status: "active")
+        payment_methods =
+          try do
+            Billing.list_payment_methods(user.uuid, status: "active")
+          rescue
+            _ -> []
+          end
 
         {:noreply,
          socket

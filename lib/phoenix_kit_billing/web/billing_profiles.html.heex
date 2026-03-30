@@ -142,7 +142,7 @@
               </.table_default_header>
               <.table_default_body>
                 <%= for profile <- @profiles do %>
-                  <.table_default_row class="hover">
+                  <.table_default_row class="hover cursor-pointer" phx-click="edit_profile" phx-value-uuid={profile.uuid}>
                     <.table_default_cell>
                       <%= if profile.user do %>
                         <div class="flex items-center gap-2">
