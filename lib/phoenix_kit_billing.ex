@@ -295,7 +295,7 @@ defmodule PhoenixKitBilling do
     %{
       enabled: enabled?(),
       default_currency: Settings.get_setting_cached("billing_default_currency", "EUR"),
-      tax_enabled: Settings.get_setting_cached("billing_tax_enabled", "false") == "true",
+      tax_enabled: tax_enabled?(),
       default_tax_rate: Settings.get_setting_cached("billing_default_tax_rate", "0"),
       invoice_prefix: Settings.get_setting_cached("billing_invoice_prefix", "INV"),
       order_prefix: Settings.get_setting_cached("billing_order_prefix", "ORD"),
@@ -324,7 +324,11 @@ defmodule PhoenixKitBilling do
   def get_tax_rate do
     if tax_enabled?() do
       rate = Settings.get_setting_cached("billing_default_tax_rate", "0")
-      Decimal.div(Decimal.new(rate), Decimal.new("100"))
+
+      case Decimal.parse(rate) do
+        {decimal, _} -> Decimal.div(decimal, Decimal.new("100"))
+        :error -> Decimal.new("0")
+      end
     else
       Decimal.new("0")
     end
@@ -334,11 +338,15 @@ defmodule PhoenixKitBilling do
   Returns the default tax rate as integer percentage (e.g., 20 for 20%).
   """
   def get_tax_rate_percent do
-    rate = Settings.get_setting_cached("billing_default_tax_rate", "0")
+    if tax_enabled?() do
+      rate = Settings.get_setting_cached("billing_default_tax_rate", "0")
 
-    case Integer.parse(rate) do
-      {value, _} -> value
-      :error -> 0
+      case Integer.parse(rate) do
+        {value, _} -> value
+        :error -> 0
+      end
+    else
+      0
     end
   end
 

@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.1.2] - 2026-03-30
+
+### Added
+
+- Subscription edit mode with status management (pause/resume/cancel) and plan type change
+- Admin detail/form routes via `admin_routes/0` and `admin_locale_routes/0`
+- `table_default` component with card/table toggle across all list pages
+- Dropdown menus (`table_row_menu`) on all list pages replacing inline action buttons
+- Subscription schema fields: `plan_name`, `price`, `currency`, `provider`, `provider_subscription_id`, `last_renewal_error`, `belongs_to :user`
+- Backward-compatible compat modules for `PhoenixKit.Modules.Billing.*` namespace
+- Shared `SubscriptionHelpers` module for `status_badge_class/1` and `format_interval/2`
+- Confirmation dialogs on destructive subscription actions (pause, cancel)
+
+### Fixed
+
+- Webhook routes now use `phoenix_kit_api` pipeline (was `api`)
+- PaymentMethod schema field mismatch: `label` → `display_name` to match DB column
+- Removed `try/rescue` blocks in subscription form that were masking the schema mismatch
+- Hardcoded `"EUR"` fallback in `create_subscription` now uses `billing_default_currency` setting
+- Added `last_renewal_error` to subscription changeset cast list
+- Cancel flash message in edit form now correctly says "will be cancelled at period end"
+
+### Changed
+
+- Refactored `admin_locale_routes/0` to share `build_admin_routes/1` with `admin_routes/0`
+- Removed duplicate `alias Routes` declarations in subscription LiveViews
+
 ## [0.1.1] - 2026-03-29
 
 ### Changed
