@@ -1,12 +1,14 @@
 defmodule PhoenixKitBilling.Web.SubscriptionForm do
   @moduledoc """
-  Subscription form LiveView for creating subscriptions manually.
+  Subscription form LiveView for creating and editing subscriptions manually.
 
   Allows administrators to:
-  - Search and select a user by email
+  - Search and select a user by email (create mode)
   - Choose a subscription type
   - Optionally assign a payment method
-  - Configure trial period
+  - Configure trial period (create mode)
+  - Manage subscription status: pause, resume, cancel (edit mode)
+  - Extend subscription period (edit mode)
   """
 
   use Phoenix.LiveView
@@ -16,6 +18,7 @@ defmodule PhoenixKitBilling.Web.SubscriptionForm do
   alias PhoenixKit.Utils.Routes
   import PhoenixKitWeb.Components.Core.Icon
   import PhoenixKitBilling.Web.Components.CurrencyDisplay
+  import PhoenixKitWeb.Components.Core.TimeDisplay
 
   alias PhoenixKit.Settings
   alias PhoenixKit.Users.Auth
@@ -42,6 +45,7 @@ defmodule PhoenixKitBilling.Web.SubscriptionForm do
         |> assign(:enable_trial, false)
         |> assign(:trial_days, "")
         |> assign(:error, nil)
+        |> assign(:subscription, nil)
 
       {:ok, socket}
     else
@@ -53,8 +57,44 @@ defmodule PhoenixKitBilling.Web.SubscriptionForm do
   end
 
   @impl true
-  def handle_params(_params, _url, socket) do
-    {:noreply, socket}
+  def handle_params(%{"id" => id}, _url, %{assigns: %{live_action: :edit}} = socket) do
+    case Billing.get_subscription(id, preload: [:subscription_type, :payment_method, :user]) do
+      nil ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Subscription not found")
+         |> push_navigate(to: Routes.path("/admin/billing/subscriptions"))}
+
+      subscription ->
+        payment_methods =
+          try do
+            Billing.list_payment_methods(subscription.user_uuid, status: "active")
+          rescue
+            _ -> []
+          end
+
+        {:noreply,
+         socket
+         |> assign(:page_title, "Edit Subscription")
+         |> assign(:subscription, subscription)
+         |> assign(:selected_user, subscription.user)
+         |> assign(
+           :selected_subscription_type_uuid,
+           to_string(subscription.subscription_type_uuid)
+         )
+         |> assign(
+           :selected_payment_method_uuid,
+           if(subscription.payment_method_uuid,
+             do: to_string(subscription.payment_method_uuid),
+             else: nil
+           )
+         )
+         |> assign(:payment_methods, payment_methods)}
+    end
+  end
+
+  def handle_params(_params, _url, %{assigns: %{live_action: :new}} = socket) do
+    {:noreply, assign(socket, :subscription, nil)}
   end
 
   @impl true
@@ -147,6 +187,30 @@ defmodule PhoenixKitBilling.Web.SubscriptionForm do
   end
 
   @impl true
+  def handle_event("save", _params, %{assigns: %{live_action: :edit}} = socket) do
+    subscription = socket.assigns.subscription
+    new_type_uuid = socket.assigns.selected_subscription_type_uuid
+
+    if to_string(subscription.subscription_type_uuid) == new_type_uuid do
+      {:noreply,
+       socket
+       |> put_flash(:info, "No changes to save")
+       |> push_navigate(to: Routes.path("/admin/billing/subscriptions/#{subscription.uuid}"))}
+    else
+      case Billing.change_subscription_type(subscription, new_type_uuid) do
+        {:ok, updated} ->
+          {:noreply,
+           socket
+           |> put_flash(:info, "Subscription updated successfully")
+           |> push_navigate(to: Routes.path("/admin/billing/subscriptions/#{updated.uuid}"))}
+
+        {:error, reason} ->
+          {:noreply, assign(socket, :error, "Failed to update subscription: #{inspect(reason)}")}
+      end
+    end
+  end
+
+  @impl true
   def handle_event("save", _params, socket) do
     %{
       selected_user: user,
@@ -198,6 +262,71 @@ defmodule PhoenixKitBilling.Web.SubscriptionForm do
     end
   end
 
+  @impl true
+  def handle_event("pause_subscription", _params, socket) do
+    case Billing.pause_subscription(socket.assigns.subscription) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Subscription paused")
+         |> push_navigate(
+           to: Routes.path("/admin/billing/subscriptions/#{socket.assigns.subscription.uuid}")
+         )}
+
+      {:error, reason} ->
+        {:noreply, assign(socket, :error, "Failed to pause: #{inspect(reason)}")}
+    end
+  end
+
+  @impl true
+  def handle_event("resume_subscription", _params, socket) do
+    case Billing.resume_subscription(socket.assigns.subscription) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Subscription resumed")
+         |> push_navigate(
+           to: Routes.path("/admin/billing/subscriptions/#{socket.assigns.subscription.uuid}")
+         )}
+
+      {:error, reason} ->
+        {:noreply, assign(socket, :error, "Failed to resume: #{inspect(reason)}")}
+    end
+  end
+
+  @impl true
+  def handle_event("cancel_subscription", _params, socket) do
+    case Billing.cancel_subscription(socket.assigns.subscription) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Subscription cancelled")
+         |> push_navigate(
+           to: Routes.path("/admin/billing/subscriptions/#{socket.assigns.subscription.uuid}")
+         )}
+
+      {:error, reason} ->
+        {:noreply, assign(socket, :error, "Failed to cancel: #{inspect(reason)}")}
+    end
+  end
+
+  @impl true
+  def handle_event("extend_subscription", _params, socket) do
+    sub = socket.assigns.subscription
+    new_end = DateTime.add(sub.current_period_end, 30, :day)
+
+    case Billing.update_subscription(sub, %{current_period_end: new_end}) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Subscription extended by 30 days")
+         |> push_navigate(to: Routes.path("/admin/billing/subscriptions/#{sub.uuid}"))}
+
+      {:error, reason} ->
+        {:noreply, assign(socket, :error, "Failed to extend: #{inspect(reason)}")}
+    end
+  end
+
   # Private helpers
 
   defp search_users(query) do
@@ -240,6 +369,17 @@ defmodule PhoenixKitBilling.Web.SubscriptionForm do
 
       type ->
         String.capitalize(type)
+    end
+  end
+
+  def status_badge_class(status) do
+    case status do
+      "active" -> "badge-success"
+      "trialing" -> "badge-info"
+      "past_due" -> "badge-warning"
+      "paused" -> "badge-neutral"
+      "cancelled" -> "badge-error"
+      _ -> "badge-ghost"
     end
   end
 end

@@ -2865,6 +2865,17 @@ defmodule PhoenixKitBilling do
   end
 
   @doc """
+  Updates a subscription with the given attributes.
+
+  Useful for administrative adjustments such as extending the billing period.
+  """
+  def update_subscription(%Subscription{} = subscription, attrs) do
+    subscription
+    |> Subscription.changeset(attrs)
+    |> repo().update()
+  end
+
+  @doc """
   Changes a subscription's type.
 
   By default, the new type takes effect at the next billing cycle.
