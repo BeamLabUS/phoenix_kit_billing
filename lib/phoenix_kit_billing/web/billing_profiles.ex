@@ -12,6 +12,7 @@ defmodule PhoenixKitBilling.Web.BillingProfiles do
   alias PhoenixKit.Utils.Routes
   import PhoenixKitWeb.Components.Core.Icon
   import PhoenixKitWeb.Components.Core.Pagination
+  import PhoenixKitWeb.Components.Core.TableDefault
   import PhoenixKitWeb.Components.Core.TimeDisplay
 
   alias PhoenixKit.Settings
