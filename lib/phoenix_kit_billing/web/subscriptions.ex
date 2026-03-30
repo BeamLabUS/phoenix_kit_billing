@@ -11,6 +11,8 @@ defmodule PhoenixKitBilling.Web.Subscriptions do
   import PhoenixKitWeb.Components.Core.UserInfo
   alias PhoenixKit.Utils.Routes
   import PhoenixKitWeb.Components.Core.Icon
+  import PhoenixKitWeb.Components.Core.TableDefault
+  import PhoenixKitWeb.Components.Core.TableRowMenu
   import PhoenixKitWeb.Components.Core.TimeDisplay
   import PhoenixKitBilling.Web.Components.CurrencyDisplay
 
@@ -87,6 +89,11 @@ defmodule PhoenixKitBilling.Web.Subscriptions do
       past_due: Enum.count(subscriptions, &(&1.status == "past_due")),
       cancelled: Enum.count(subscriptions, &(&1.status == "cancelled"))
     }
+  end
+
+  @impl true
+  def handle_event("view_subscription", %{"uuid" => uuid}, socket) do
+    {:noreply, push_navigate(socket, to: Routes.path("/admin/billing/subscriptions/#{uuid}"))}
   end
 
   @impl true

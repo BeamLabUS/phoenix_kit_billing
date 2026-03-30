@@ -13,6 +13,7 @@ defmodule PhoenixKitBilling.Web.BillingProfiles do
   import PhoenixKitWeb.Components.Core.Icon
   import PhoenixKitWeb.Components.Core.Pagination
   import PhoenixKitWeb.Components.Core.TableDefault
+  import PhoenixKitWeb.Components.Core.TableRowMenu
   import PhoenixKitWeb.Components.Core.TimeDisplay
 
   alias PhoenixKit.Settings

@@ -12,6 +12,7 @@ defmodule PhoenixKitBilling.Web.Currencies do
   alias PhoenixKit.Utils.Routes
   import PhoenixKitWeb.Components.Core.Icon
   import PhoenixKitWeb.Components.Core.TableDefault
+  import PhoenixKitWeb.Components.Core.TableRowMenu
 
   alias PhoenixKit.Settings
   alias PhoenixKit.Utils.Routes

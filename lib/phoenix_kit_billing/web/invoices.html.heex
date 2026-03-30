@@ -115,14 +115,18 @@
                 </div>
               </:card_header>
               <:card_actions :let={invoice}>
-                <.link
-                  navigate={
-                    PhoenixKit.Utils.Routes.path("/admin/billing/invoices/#{invoice.uuid}")
-                  }
-                  class="btn btn-xs btn-outline btn-info"
-                >
-                  <.icon name="hero-eye" class="w-3 h-3" /> {gettext("View")}
-                </.link>
+                <.table_row_menu id={"card-menu-#{invoice.uuid}"}>
+                  <.table_row_menu_link
+                    navigate={PhoenixKit.Utils.Routes.path("/admin/billing/invoices/#{invoice.uuid}")}
+                    icon="hero-eye"
+                    label={gettext("View")}
+                  />
+                  <.table_row_menu_link
+                    navigate={PhoenixKit.Utils.Routes.path("/admin/billing/invoices/#{invoice.uuid}/print")}
+                    icon="hero-printer"
+                    label={gettext("Print")}
+                  />
+                </.table_row_menu>
               </:card_actions>
               <.table_default_header>
                 <.table_default_row>
@@ -185,18 +189,18 @@
                       <% end %>
                     </.table_default_cell>
                     <.table_default_cell>
-                      <.link
-                        navigate={
-                          PhoenixKit.Utils.Routes.path(
-                            "/admin/billing/invoices/#{invoice.uuid}"
-                          )
-                        }
-                        class="btn btn-xs btn-outline btn-info tooltip tooltip-bottom"
-                        data-tip={gettext("View")}
-                      >
-                        <.icon name="hero-eye" class="w-4 h-4 hidden sm:inline" />
-                        <span class="sm:hidden whitespace-nowrap">{gettext("View")}</span>
-                      </.link>
+                      <.table_row_menu id={"menu-#{invoice.uuid}"}>
+                        <.table_row_menu_link
+                          navigate={PhoenixKit.Utils.Routes.path("/admin/billing/invoices/#{invoice.uuid}")}
+                          icon="hero-eye"
+                          label={gettext("View")}
+                        />
+                        <.table_row_menu_link
+                          navigate={PhoenixKit.Utils.Routes.path("/admin/billing/invoices/#{invoice.uuid}/print")}
+                          icon="hero-printer"
+                          label={gettext("Print")}
+                        />
+                      </.table_row_menu>
                     </.table_default_cell>
                   </.table_default_row>
                 <% end %>

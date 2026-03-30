@@ -13,6 +13,7 @@ defmodule PhoenixKitBilling.Web.Invoices do
   import PhoenixKitWeb.Components.Core.Icon
   import PhoenixKitWeb.Components.Core.Pagination
   import PhoenixKitWeb.Components.Core.TableDefault
+  import PhoenixKitWeb.Components.Core.TableRowMenu
   import PhoenixKitBilling.Web.Components.CurrencyDisplay
   import PhoenixKitBilling.Web.Components.InvoiceStatusBadge
 

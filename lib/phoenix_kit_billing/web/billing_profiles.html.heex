@@ -121,16 +121,13 @@
                 </div>
               </:card_header>
               <:card_actions :let={profile}>
-                <.link
-                  navigate={
-                    PhoenixKit.Utils.Routes.path(
-                      "/admin/billing/profiles/#{profile.uuid}/edit"
-                    )
-                  }
-                  class="btn btn-xs btn-outline btn-info"
-                >
-                  <.icon name="hero-pencil" class="w-3 h-3" /> {gettext("Edit")}
-                </.link>
+                <.table_row_menu id={"card-menu-#{profile.uuid}"}>
+                  <.table_row_menu_link
+                    navigate={PhoenixKit.Utils.Routes.path("/admin/billing/profiles/#{profile.uuid}/edit")}
+                    icon="hero-pencil"
+                    label={gettext("Edit")}
+                  />
+                </.table_row_menu>
               </:card_actions>
               <.table_default_header>
                 <.table_default_row>
@@ -194,18 +191,13 @@
                       <.time_ago datetime={profile.inserted_at} />
                     </.table_default_cell>
                     <.table_default_cell>
-                      <.link
-                        navigate={
-                          PhoenixKit.Utils.Routes.path(
-                            "/admin/billing/profiles/#{profile.uuid}/edit"
-                          )
-                        }
-                        class="btn btn-xs btn-outline btn-info tooltip tooltip-bottom"
-                        data-tip={gettext("Edit")}
-                      >
-                        <.icon name="hero-pencil" class="w-4 h-4 hidden sm:inline" />
-                        <span class="sm:hidden whitespace-nowrap">{gettext("Edit")}</span>
-                      </.link>
+                      <.table_row_menu id={"menu-#{profile.uuid}"}>
+                        <.table_row_menu_link
+                          navigate={PhoenixKit.Utils.Routes.path("/admin/billing/profiles/#{profile.uuid}/edit")}
+                          icon="hero-pencil"
+                          label={gettext("Edit")}
+                        />
+                      </.table_row_menu>
                     </.table_default_cell>
                   </.table_default_row>
                 <% end %>

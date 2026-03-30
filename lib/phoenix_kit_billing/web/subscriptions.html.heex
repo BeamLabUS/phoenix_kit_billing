@@ -109,7 +109,7 @@
 
     <%!-- Subscriptions Table --%>
     <div class="card bg-base-100 shadow-xl">
-      <div class="card-body">
+      <div class="card-body p-0">
         <%= if Enum.empty?(@subscriptions) do %>
           <div class="text-center py-12 text-base-content/50">
             <.icon name="hero-credit-card" class="w-12 h-12 mx-auto mb-4 opacity-50" />
@@ -119,119 +119,181 @@
             </p>
           </div>
         <% else %>
-          <div class="overflow-x-auto">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Customer</th>
-                  <th>Subscription Type</th>
-                  <th>Status</th>
-                  <th>Current Period</th>
-                  <th>Price</th>
-                  <th class="text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <%= for subscription <- @subscriptions do %>
-                  <tr>
-                    <td>
-                      <%= if subscription.user do %>
-                        <div class="flex items-center gap-3">
-                          <.user_avatar user={subscription.user} size="sm" />
-                          <div>
-                            <div class="font-medium text-sm">{subscription.user.email}</div>
-                            <div class="text-xs text-base-content/60">
-                              ID: {subscription.uuid}
-                            </div>
-                          </div>
-                        </div>
-                      <% else %>
-                        <span class="text-base-content/50">No user</span>
-                      <% end %>
-                    </td>
-                    <td>
-                      <%= if subscription.subscription_type do %>
+          <.table_default
+            id="subscriptions-table"
+            variant="zebra"
+            class="w-full"
+            toggleable={true}
+            items={@subscriptions}
+            card_fields={
+              fn sub ->
+                [
+                  %{
+                    label: "User",
+                    value: if(sub.user, do: sub.user.email, else: "-")
+                  },
+                  %{
+                    label: "Plan",
+                    value: if(sub.subscription_type, do: sub.subscription_type.name, else: "-")
+                  },
+                  %{label: "Status", value: sub.status},
+                  %{
+                    label: "Period",
+                    value:
+                      if(sub.current_period_end,
+                        do: sub.current_period_end,
+                        else: "-"
+                      )
+                  }
+                ]
+              end
+            }
+          >
+            <:card_header :let={sub}>
+              <div class="flex items-center justify-between">
+                <span class="font-medium">
+                  {if sub.subscription_type, do: sub.subscription_type.name, else: "Subscription"}
+                </span>
+                <span class={["badge badge-sm h-auto", status_badge_class(sub.status)]}>
+                  {sub.status}
+                </span>
+              </div>
+            </:card_header>
+            <:card_actions :let={sub}>
+              <.link
+                navigate={
+                  PhoenixKit.Utils.Routes.path("/admin/billing/subscriptions/#{sub.uuid}")
+                }
+                class="btn btn-xs btn-outline btn-info"
+              >
+                <.icon name="hero-eye" class="w-3 h-3" /> {gettext("View")}
+              </.link>
+              <%= if sub.status == "active" && !sub.cancel_at_period_end do %>
+                <button
+                  phx-click="cancel_subscription"
+                  phx-value-uuid={sub.uuid}
+                  class="btn btn-xs btn-outline btn-error"
+                  data-confirm={gettext("Are you sure you want to cancel this subscription?")}
+                >
+                  {gettext("Cancel")}
+                </button>
+              <% end %>
+            </:card_actions>
+            <.table_default_header>
+              <.table_default_row>
+                <.table_default_header_cell>Customer</.table_default_header_cell>
+                <.table_default_header_cell>Subscription Type</.table_default_header_cell>
+                <.table_default_header_cell>Status</.table_default_header_cell>
+                <.table_default_header_cell>Current Period</.table_default_header_cell>
+                <.table_default_header_cell>Price</.table_default_header_cell>
+                <.table_default_header_cell></.table_default_header_cell>
+              </.table_default_row>
+            </.table_default_header>
+            <.table_default_body>
+              <%= for sub <- @subscriptions do %>
+                <.table_default_row
+                  class="hover cursor-pointer"
+                  phx-click="view_subscription"
+                  phx-value-uuid={sub.uuid}
+                >
+                  <.table_default_cell>
+                    <%= if sub.user do %>
+                      <div class="flex items-center gap-2">
+                        <.user_avatar user={sub.user} size="sm" />
                         <div>
-                          <div class="font-medium">{subscription.subscription_type.name}</div>
-                          <div class="text-xs text-base-content/60">
-                            {format_interval(
-                              subscription.subscription_type.interval,
-                              subscription.subscription_type.interval_count
-                            )}
-                          </div>
+                          <div class="font-medium text-sm">{sub.user.email}</div>
                         </div>
-                      <% else %>
-                        <span class="text-base-content/50">No subscription type</span>
-                      <% end %>
-                    </td>
-                    <td>
-                      <span class={[
-                        "badge badge-sm h-auto",
-                        status_badge_class(subscription.status)
-                      ]}>
-                        {subscription.status}
-                      </span>
-                      <%= if subscription.cancel_at_period_end do %>
-                        <span class="badge badge-warning badge-xs ml-1">Cancels at end</span>
-                      <% end %>
-                    </td>
-                    <td>
-                      <div class="text-sm">
-                        <%= if subscription.current_period_start && subscription.current_period_end do %>
-                          <div>
-                            <.time_ago datetime={subscription.current_period_start} /> →
-                          </div>
-                          <div class="text-base-content/60">
-                            <.time_ago datetime={subscription.current_period_end} />
-                          </div>
-                        <% else %>
-                          <span class="text-base-content/50">-</span>
-                        <% end %>
                       </div>
-                    </td>
-                    <td>
-                      <%= if subscription.subscription_type do %>
-                        <.currency_compact
-                          amount={subscription.subscription_type.price}
-                          currency={subscription.subscription_type.currency}
-                        />
+                    <% else %>
+                      <span class="text-base-content/50">No user</span>
+                    <% end %>
+                  </.table_default_cell>
+                  <.table_default_cell>
+                    <%= if sub.subscription_type do %>
+                      <div>
+                        <div class="font-medium">{sub.subscription_type.name}</div>
+                        <div class="text-xs text-base-content/60">
+                          {format_interval(
+                            sub.subscription_type.interval,
+                            sub.subscription_type.interval_count
+                          )}
+                        </div>
+                      </div>
+                    <% else %>
+                      <span class="text-base-content/50">No subscription type</span>
+                    <% end %>
+                  </.table_default_cell>
+                  <.table_default_cell>
+                    <span class={["badge badge-sm h-auto", status_badge_class(sub.status)]}>
+                      {sub.status}
+                    </span>
+                    <%= if sub.cancel_at_period_end do %>
+                      <span class="badge badge-warning badge-xs ml-1">Cancels at end</span>
+                    <% end %>
+                  </.table_default_cell>
+                  <.table_default_cell>
+                    <div class="text-sm">
+                      <%= if sub.current_period_start && sub.current_period_end do %>
+                        <div>
+                          <.time_ago datetime={sub.current_period_start} /> →
+                        </div>
+                        <div class="text-base-content/60">
+                          <.time_ago datetime={sub.current_period_end} />
+                        </div>
                       <% else %>
                         <span class="text-base-content/50">-</span>
                       <% end %>
-                    </td>
-                    <td class="text-right">
-                      <div class="flex gap-1 justify-end">
-                        <.link
-                          navigate={
-                            PhoenixKit.Utils.Routes.path(
-                              "/admin/billing/subscriptions/#{subscription.uuid}"
-                            )
+                    </div>
+                  </.table_default_cell>
+                  <.table_default_cell>
+                    <%= if sub.subscription_type do %>
+                      <.currency_compact
+                        amount={sub.subscription_type.price}
+                        currency={sub.subscription_type.currency}
+                      />
+                    <% else %>
+                      <span class="text-base-content/50">-</span>
+                    <% end %>
+                  </.table_default_cell>
+                  <.table_default_cell>
+                    <.table_row_menu id={"menu-#{sub.uuid}"}>
+                      <.table_row_menu_link
+                        navigate={
+                          PhoenixKit.Utils.Routes.path(
+                            "/admin/billing/subscriptions/#{sub.uuid}"
+                          )
+                        }
+                        icon="hero-eye"
+                        label={gettext("View")}
+                      />
+                      <.table_row_menu_link
+                        navigate={
+                          PhoenixKit.Utils.Routes.path(
+                            "/admin/billing/subscriptions/#{sub.uuid}/edit"
+                          )
+                        }
+                        icon="hero-pencil"
+                        label={gettext("Edit")}
+                      />
+                      <%= if sub.status == "active" && !sub.cancel_at_period_end do %>
+                        <.table_row_menu_divider />
+                        <.table_row_menu_button
+                          phx-click="cancel_subscription"
+                          phx-value-uuid={sub.uuid}
+                          data-confirm={
+                            gettext("Are you sure you want to cancel this subscription?")
                           }
-                          class="btn btn-xs btn-outline btn-info tooltip tooltip-bottom"
-                          data-tip={gettext("View")}
-                        >
-                          <.icon name="hero-eye" class="w-4 h-4 hidden sm:inline" />
-                          <span class="sm:hidden whitespace-nowrap">{gettext("View")}</span>
-                        </.link>
-                        <%= if subscription.status in ["active", "trialing"] && !subscription.cancel_at_period_end do %>
-                          <button
-                            phx-click="cancel_subscription"
-                            phx-value-uuid={subscription.uuid}
-                            class="btn btn-xs btn-outline btn-error tooltip tooltip-bottom"
-                            data-confirm="Cancel this subscription at period end?"
-                            data-tip={gettext("Cancel")}
-                          >
-                            <.icon name="hero-x-mark" class="w-4 h-4 hidden sm:inline" />
-                            <span class="sm:hidden whitespace-nowrap">{gettext("Cancel")}</span>
-                          </button>
-                        <% end %>
-                      </div>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
+                          icon="hero-x-circle"
+                          label={gettext("Cancel")}
+                          variant="error"
+                        />
+                      <% end %>
+                    </.table_row_menu>
+                  </.table_default_cell>
+                </.table_default_row>
+              <% end %>
+            </.table_default_body>
+          </.table_default>
         <% end %>
       </div>
     </div>

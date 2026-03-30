@@ -51,16 +51,17 @@
                   </span>
                 </label>
                 <div class="relative">
-                  <input
-                    type="text"
-                    value={@user_search}
-                    phx-keyup="search_user"
-                    phx-debounce="300"
-                    name="query"
-                    class="input input-bordered w-full"
-                    placeholder="Enter email address..."
-                    autocomplete="off"
-                  />
+                  <form phx-change="search_user" phx-submit="search_user">
+                    <input
+                      type="text"
+                      value={@user_search}
+                      phx-debounce="300"
+                      name="query"
+                      class="input input-bordered w-full"
+                      placeholder="Enter email address..."
+                      autocomplete="off"
+                    />
+                  </form>
                   <%= if @user_search != "" && length(@user_results) > 0 do %>
                     <div class="absolute z-10 w-full mt-1 bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                       <%= for user <- @user_results do %>
