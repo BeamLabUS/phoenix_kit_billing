@@ -49,6 +49,15 @@ defmodule PhoenixKitBilling.Subscription do
   @primary_key {:uuid, UUIDv7, autogenerate: true}
 
   schema "phoenix_kit_subscriptions" do
+    # Plan snapshot (copied from subscription type at creation)
+    field(:plan_name, :string)
+    field(:price, :decimal)
+    field(:currency, :string, default: "EUR")
+
+    # Provider
+    field(:provider, :string)
+    field(:provider_subscription_id, :string)
+
     field(:status, :string, default: "active")
 
     # Billing period
@@ -67,12 +76,19 @@ defmodule PhoenixKitBilling.Subscription do
     field(:grace_period_end, :utc_datetime)
     field(:renewal_attempts, :integer, default: 0)
     field(:last_renewal_attempt_at, :utc_datetime)
+    field(:last_renewal_error, :string)
 
     # Metadata
     field(:metadata, :map, default: %{})
 
     # Associations
-    # User reference (cross-package — FK constraint in core migrations)
+    belongs_to(:user, PhoenixKit.Users.Auth.User,
+      foreign_key: :user_uuid,
+      references: :uuid,
+      type: UUIDv7,
+      define_field: false
+    )
+
     field(:user_uuid, UUIDv7)
 
     belongs_to(:billing_profile, BillingProfile,
@@ -102,6 +118,11 @@ defmodule PhoenixKitBilling.Subscription do
   def changeset(subscription, attrs) do
     subscription
     |> cast(attrs, [
+      :plan_name,
+      :price,
+      :currency,
+      :provider,
+      :provider_subscription_id,
       :status,
       :current_period_start,
       :current_period_end,
@@ -119,6 +140,9 @@ defmodule PhoenixKitBilling.Subscription do
       :payment_method_uuid
     ])
     |> validate_required([
+      :plan_name,
+      :price,
+      :currency,
       :user_uuid,
       :subscription_type_uuid,
       :current_period_start,

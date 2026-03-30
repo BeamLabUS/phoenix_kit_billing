@@ -82,100 +82,138 @@
               </p>
             </div>
           <% else %>
-            <div class="overflow-x-auto">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Transaction #</th>
-                    <th>Invoice</th>
-                    <th>Type</th>
-                    <th>Amount</th>
-                    <th>Method</th>
-                    <th>Description</th>
-                    <th>Date</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <%= for transaction <- @transactions do %>
-                    <tr
-                      class="hover cursor-pointer"
-                      phx-click="view_invoice"
-                      phx-value-uuid={transaction.invoice_uuid}
-                    >
-                      <td class="font-mono text-sm">{transaction.transaction_number}</td>
-                      <td>
-                        <%= if transaction.invoice do %>
-                          <.link
-                            navigate={
-                              PhoenixKit.Utils.Routes.path(
-                                "/admin/billing/invoices/#{transaction.invoice_uuid}"
-                              )
-                            }
-                            class="link link-hover font-mono text-sm"
-                          >
-                            {transaction.invoice.invoice_number}
-                          </.link>
-                        <% else %>
-                          <span class="text-base-content/50">-</span>
-                        <% end %>
-                      </td>
-                      <td>
-                        <.transaction_type_badge type={transaction_type(transaction)} />
-                      </td>
-                      <td>
-                        <span class={[
-                          "font-mono font-medium",
-                          if(Decimal.positive?(transaction.amount),
-                            do: "text-success",
-                            else: "text-error"
-                          )
-                        ]}>
-                          <%= if Decimal.positive?(transaction.amount) do %>
-                            +<.currency_compact
-                              amount={transaction.amount}
-                              currency={transaction.currency}
-                            />
-                          <% else %>
-                            <.currency_compact
-                              amount={transaction.amount}
-                              currency={transaction.currency}
-                            />
-                          <% end %>
-                        </span>
-                      </td>
-                      <td>
-                        <span class="badge badge-outline badge-sm h-auto">
-                          {String.upcase(transaction.payment_method || "bank")}
-                        </span>
-                      </td>
-                      <td class="max-w-[200px] truncate text-sm text-base-content/70">
-                        {transaction.description || "-"}
-                      </td>
-                      <td class="text-sm text-base-content/60">
-                        <.time_ago datetime={transaction.inserted_at} />
-                      </td>
-                      <td>
+            <.table_default
+              id="transactions-table"
+              variant="zebra"
+              class="w-full"
+              toggleable={true}
+              items={@transactions}
+              card_fields={
+                fn transaction ->
+                  [
+                    %{label: "Type", value: transaction_type(transaction)},
+                    %{
+                      label: "Amount",
+                      value:
+                        if(Decimal.positive?(transaction.amount),
+                          do: "+#{transaction.amount} #{transaction.currency}",
+                          else: "#{transaction.amount} #{transaction.currency}"
+                        )
+                    },
+                    %{label: "Status", value: String.upcase(transaction.payment_method || "bank")},
+                    %{label: "Date", value: transaction.inserted_at}
+                  ]
+                end
+              }
+            >
+              <:card_header :let={transaction}>
+                <div class="flex items-center justify-between">
+                  <span class="font-mono font-medium">{transaction.transaction_number}</span>
+                  <.transaction_type_badge type={transaction_type(transaction)} />
+                </div>
+              </:card_header>
+              <:card_actions :let={transaction}>
+                <.link
+                  navigate={
+                    PhoenixKit.Utils.Routes.path(
+                      "/admin/billing/invoices/#{transaction.invoice_uuid}"
+                    )
+                  }
+                  class="btn btn-xs btn-outline btn-info"
+                >
+                  <.icon name="hero-eye" class="w-3 h-3" /> {gettext("View Invoice")}
+                </.link>
+              </:card_actions>
+              <.table_default_header>
+                <.table_default_row>
+                  <.table_default_header_cell>Transaction #</.table_default_header_cell>
+                  <.table_default_header_cell>Invoice</.table_default_header_cell>
+                  <.table_default_header_cell>Type</.table_default_header_cell>
+                  <.table_default_header_cell>Amount</.table_default_header_cell>
+                  <.table_default_header_cell>Method</.table_default_header_cell>
+                  <.table_default_header_cell>Description</.table_default_header_cell>
+                  <.table_default_header_cell>Date</.table_default_header_cell>
+                  <.table_default_header_cell></.table_default_header_cell>
+                </.table_default_row>
+              </.table_default_header>
+              <.table_default_body>
+                <%= for transaction <- @transactions do %>
+                  <.table_default_row
+                    class="hover cursor-pointer"
+                    phx-click="view_invoice"
+                    phx-value-uuid={transaction.invoice_uuid}
+                  >
+                    <.table_default_cell class="font-mono text-sm">
+                      {transaction.transaction_number}
+                    </.table_default_cell>
+                    <.table_default_cell>
+                      <%= if transaction.invoice do %>
                         <.link
                           navigate={
                             PhoenixKit.Utils.Routes.path(
                               "/admin/billing/invoices/#{transaction.invoice_uuid}"
                             )
                           }
-                          class="btn btn-xs btn-outline btn-info tooltip tooltip-bottom"
-                          data-tip={gettext("View Invoice")}
+                          class="link link-hover font-mono text-sm"
                         >
-                          <.icon name="hero-eye" class="w-4 h-4 hidden sm:inline" />
-                          <span class="sm:hidden whitespace-nowrap">
-                            {gettext("View Invoice")}
-                          </span>
+                          {transaction.invoice.invoice_number}
                         </.link>
-                      </td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            </div>
+                      <% else %>
+                        <span class="text-base-content/50">-</span>
+                      <% end %>
+                    </.table_default_cell>
+                    <.table_default_cell>
+                      <.transaction_type_badge type={transaction_type(transaction)} />
+                    </.table_default_cell>
+                    <.table_default_cell>
+                      <span class={[
+                        "font-mono font-medium",
+                        if(Decimal.positive?(transaction.amount),
+                          do: "text-success",
+                          else: "text-error"
+                        )
+                      ]}>
+                        <%= if Decimal.positive?(transaction.amount) do %>
+                          +<.currency_compact
+                            amount={transaction.amount}
+                            currency={transaction.currency}
+                          />
+                        <% else %>
+                          <.currency_compact
+                            amount={transaction.amount}
+                            currency={transaction.currency}
+                          />
+                        <% end %>
+                      </span>
+                    </.table_default_cell>
+                    <.table_default_cell>
+                      <span class="badge badge-outline badge-sm h-auto">
+                        {String.upcase(transaction.payment_method || "bank")}
+                      </span>
+                    </.table_default_cell>
+                    <.table_default_cell class="max-w-[200px] truncate text-sm text-base-content/70">
+                      {transaction.description || "-"}
+                    </.table_default_cell>
+                    <.table_default_cell class="text-sm text-base-content/60">
+                      <.time_ago datetime={transaction.inserted_at} />
+                    </.table_default_cell>
+                    <.table_default_cell>
+                      <.table_row_menu id={"menu-#{transaction.uuid}"}>
+                        <.table_row_menu_link
+                          navigate={
+                            PhoenixKit.Utils.Routes.path(
+                              "/admin/billing/invoices/#{transaction.invoice_uuid}"
+                            )
+                          }
+                          icon="hero-eye"
+                          label={gettext("View Invoice")}
+                        />
+                      </.table_row_menu>
+                    </.table_default_cell>
+                  </.table_default_row>
+                <% end %>
+              </.table_default_body>
+            </.table_default>
 
             <%!-- Pagination --%>
             <%= if @total_pages > 1 do %>

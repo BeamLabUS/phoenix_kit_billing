@@ -12,6 +12,8 @@ defmodule PhoenixKitBilling.Web.BillingProfiles do
   alias PhoenixKit.Utils.Routes
   import PhoenixKitWeb.Components.Core.Icon
   import PhoenixKitWeb.Components.Core.Pagination
+  import PhoenixKitWeb.Components.Core.TableDefault
+  import PhoenixKitWeb.Components.Core.TableRowMenu
   import PhoenixKitWeb.Components.Core.TimeDisplay
 
   alias PhoenixKit.Settings
@@ -110,6 +112,11 @@ defmodule PhoenixKitBilling.Web.BillingProfiles do
         else: Routes.path("/admin/billing/profiles?#{query_params}")
 
     {:noreply, push_patch(socket, to: path)}
+  end
+
+  @impl true
+  def handle_event("edit_profile", %{"uuid" => uuid}, socket) do
+    {:noreply, push_navigate(socket, to: Routes.path("/admin/billing/profiles/#{uuid}/edit"))}
   end
 
   @impl true

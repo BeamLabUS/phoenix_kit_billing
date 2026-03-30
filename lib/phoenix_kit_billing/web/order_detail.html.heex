@@ -183,36 +183,36 @@
               </div>
             <% else %>
               <div class="overflow-x-auto mt-4">
-                <table class="table table-sm">
-                  <thead>
-                    <tr>
-                      <th>Invoice #</th>
-                      <th>Status</th>
-                      <th>Total</th>
-                      <th>Due Date</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                <.table_default size="sm">
+                  <.table_default_header>
+                    <.table_default_row>
+                      <.table_default_header_cell>Invoice #</.table_default_header_cell>
+                      <.table_default_header_cell>Status</.table_default_header_cell>
+                      <.table_default_header_cell>Total</.table_default_header_cell>
+                      <.table_default_header_cell>Due Date</.table_default_header_cell>
+                      <.table_default_header_cell></.table_default_header_cell>
+                    </.table_default_row>
+                  </.table_default_header>
+                  <.table_default_body>
                     <%= for invoice <- @invoices do %>
-                      <tr
+                      <.table_default_row
                         class="hover cursor-pointer"
                         phx-click="view_invoice"
                         phx-value-uuid={invoice.uuid}
                       >
-                        <td class="font-mono">{invoice.invoice_number}</td>
-                        <td><.invoice_status_badge status={invoice.status} /></td>
-                        <td>
+                        <.table_default_cell class="font-mono">{invoice.invoice_number}</.table_default_cell>
+                        <.table_default_cell><.invoice_status_badge status={invoice.status} /></.table_default_cell>
+                        <.table_default_cell>
                           <.currency_compact amount={invoice.total} currency={invoice.currency} />
-                        </td>
-                        <td>
+                        </.table_default_cell>
+                        <.table_default_cell>
                           <%= if invoice.due_date do %>
                             {Calendar.strftime(invoice.due_date, "%b %d, %Y")}
                           <% else %>
                             <span class="text-base-content/40">-</span>
                           <% end %>
-                        </td>
-                        <td>
+                        </.table_default_cell>
+                        <.table_default_cell>
                           <.link
                             navigate={
                               PhoenixKit.Utils.Routes.path(
@@ -227,11 +227,11 @@
                               {gettext("View Invoice")}
                             </span>
                           </.link>
-                        </td>
-                      </tr>
+                        </.table_default_cell>
+                      </.table_default_row>
                     <% end %>
-                  </tbody>
-                </table>
+                  </.table_default_body>
+                </.table_default>
               </div>
             <% end %>
           </div>

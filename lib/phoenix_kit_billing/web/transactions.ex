@@ -11,6 +11,8 @@ defmodule PhoenixKitBilling.Web.Transactions do
   alias PhoenixKit.Utils.Routes
   import PhoenixKitWeb.Components.Core.Icon
   import PhoenixKitWeb.Components.Core.Pagination
+  import PhoenixKitWeb.Components.Core.TableDefault
+  import PhoenixKitWeb.Components.Core.TableRowMenu
   import PhoenixKitWeb.Components.Core.TimeDisplay
   import PhoenixKitBilling.Web.Components.CurrencyDisplay
   import PhoenixKitBilling.Web.Components.TransactionTypeBadge

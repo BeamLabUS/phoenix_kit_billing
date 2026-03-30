@@ -6,11 +6,11 @@
       subtitle="Manage supported currencies for billing"
     >
       <:actions>
-        <button phx-click="show_add_form" class="btn btn-primary btn-sm">
-          <.icon name="hero-plus" class="w-4 h-4" /> Add Currency
-        </button>
-        <button phx-click="show_import" class="btn btn-ghost btn-sm">
+        <button phx-click="show_import" class="btn btn-primary btn-sm">
           <.icon name="hero-arrow-down-tray" class="w-4 h-4" /> Import
+        </button>
+        <button phx-click="show_add_form" class="btn btn-outline btn-sm">
+          <.icon name="hero-plus" class="w-4 h-4" /> Add Currency
         </button>
         <button phx-click="refresh" class="btn btn-ghost btn-sm btn-square">
           <.icon name="hero-arrow-path" class="w-4 h-4" />
@@ -74,99 +74,180 @@
               </div>
             </div>
           <% else %>
-            <div class="overflow-x-auto">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Currency</th>
-                    <th>Symbol</th>
-                    <th>Decimal Places</th>
-                    <th>Exchange Rate</th>
-                    <th>Status</th>
-                    <th>Default</th>
-                    <th class="text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <%= for currency <- @currencies do %>
-                    <tr class="hover">
-                      <td>
-                        <div class="flex items-center gap-3">
-                          <div class="font-mono text-lg font-bold">{currency.code}</div>
-                          <div class="text-sm text-base-content/60">{currency.name}</div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="text-xl font-bold">{currency.symbol}</span>
-                      </td>
-                      <td>{currency.decimal_places}</td>
-                      <td>
-                        <%= if currency.is_default do %>
-                          <span class="badge badge-ghost">Base</span>
-                        <% else %>
-                          <span class="font-mono">
-                            {Decimal.to_string(currency.exchange_rate)}
+            <.table_default
+              id="currencies-table"
+              variant="zebra"
+              class="w-full"
+              toggleable={true}
+              items={@currencies}
+              card_fields={
+                fn currency ->
+                  [
+                    %{label: "Decimal Places", value: currency.decimal_places},
+                    %{
+                      label: "Exchange Rate",
+                      value:
+                        if(currency.is_default,
+                          do: "Base",
+                          else: Decimal.to_string(currency.exchange_rate)
+                        )
+                    },
+                    %{
+                      label: "Status",
+                      value: if(currency.enabled, do: "Enabled", else: "Disabled")
+                    },
+                    %{
+                      label: "Default",
+                      value: if(currency.is_default, do: "Yes", else: "No")
+                    }
+                  ]
+                end
+              }
+            >
+              <:card_header :let={currency}>
+                <div class="flex items-center gap-2">
+                  <span class="font-mono text-lg font-bold">{currency.code}</span>
+                  <span class="text-base-content/60">{currency.name}</span>
+                  <span class="text-xl font-bold ml-auto">{currency.symbol}</span>
+                </div>
+              </:card_header>
+              <:card_actions :let={currency}>
+                <.table_row_menu id={"card-menu-#{currency.uuid}"}>
+                  <.table_row_menu_button
+                    phx-click="show_edit_form"
+                    phx-value-uuid={currency.uuid}
+                    icon="hero-pencil"
+                    label={gettext("Edit")}
+                  />
+                  <.table_row_menu_button
+                    phx-click={if currency.enabled, do: "disable_currency", else: "enable_currency"}
+                    phx-value-uuid={currency.uuid}
+                    icon={if currency.enabled, do: "hero-eye-slash", else: "hero-eye"}
+                    label={if currency.enabled, do: gettext("Disable"), else: gettext("Enable")}
+                  />
+                  <%= unless currency.is_default do %>
+                    <.table_row_menu_button
+                      phx-click="set_default"
+                      phx-value-uuid={currency.uuid}
+                      icon="hero-star"
+                      label={gettext("Set as Default")}
+                    />
+                  <% end %>
+                  <.table_row_menu_divider />
+                  <.table_row_menu_button
+                    phx-click="delete_currency"
+                    phx-value-uuid={currency.uuid}
+                    data-confirm={gettext("Are you sure?")}
+                    icon="hero-trash"
+                    label={gettext("Delete")}
+                    variant="error"
+                  />
+                </.table_row_menu>
+              </:card_actions>
+              <.table_default_header>
+                <.table_default_row>
+                  <.table_default_header_cell>Currency</.table_default_header_cell>
+                  <.table_default_header_cell>Symbol</.table_default_header_cell>
+                  <.table_default_header_cell>Decimal Places</.table_default_header_cell>
+                  <.table_default_header_cell>Exchange Rate</.table_default_header_cell>
+                  <.table_default_header_cell>Status</.table_default_header_cell>
+                  <.table_default_header_cell>Default</.table_default_header_cell>
+                  <.table_default_header_cell class="text-right">Actions</.table_default_header_cell>
+                </.table_default_row>
+              </.table_default_header>
+              <.table_default_body>
+                <%= for currency <- @currencies do %>
+                  <.table_default_row class="hover">
+                    <.table_default_cell>
+                      <button
+                        phx-click="show_edit_form"
+                        phx-value-uuid={currency.uuid}
+                        class="flex items-center gap-3 hover:text-primary transition-colors"
+                      >
+                        <div class="font-mono text-lg font-bold">{currency.code}</div>
+                        <div class="text-sm text-base-content/60">{currency.name}</div>
+                      </button>
+                    </.table_default_cell>
+                    <.table_default_cell>
+                      <span class="text-xl font-bold">{currency.symbol}</span>
+                    </.table_default_cell>
+                    <.table_default_cell>{currency.decimal_places}</.table_default_cell>
+                    <.table_default_cell>
+                      <%= if currency.is_default do %>
+                        <span class="badge badge-ghost">Base</span>
+                      <% else %>
+                        <span class="font-mono">
+                          {Decimal.to_string(currency.exchange_rate)}
+                        </span>
+                      <% end %>
+                    </.table_default_cell>
+                    <.table_default_cell>
+                      <label class="cursor-pointer">
+                        <input
+                          type="checkbox"
+                          class="toggle toggle-success toggle-sm"
+                          checked={currency.enabled}
+                          phx-click="toggle_enabled"
+                          phx-value-uuid={currency.uuid}
+                        />
+                      </label>
+                    </.table_default_cell>
+                    <.table_default_cell>
+                      <%= if currency.is_default do %>
+                        <span class="badge badge-primary">Default</span>
+                      <% else %>
+                        <button
+                          phx-click="set_default"
+                          phx-value-uuid={currency.uuid}
+                          class="btn btn-xs btn-outline btn-info tooltip tooltip-bottom"
+                          data-tip={gettext("Set Default")}
+                        >
+                          <.icon name="hero-star" class="w-4 h-4 hidden sm:inline" />
+                          <span class="sm:hidden whitespace-nowrap">
+                            {gettext("Set Default")}
                           </span>
-                        <% end %>
-                      </td>
-                      <td>
-                        <label class="cursor-pointer">
-                          <input
-                            type="checkbox"
-                            class="toggle toggle-success toggle-sm"
-                            checked={currency.enabled}
-                            phx-click="toggle_enabled"
-                            phx-value-uuid={currency.uuid}
-                          />
-                        </label>
-                      </td>
-                      <td>
-                        <%= if currency.is_default do %>
-                          <span class="badge badge-primary">Default</span>
-                        <% else %>
-                          <button
-                            phx-click="set_default"
-                            phx-value-uuid={currency.uuid}
-                            class="btn btn-xs btn-outline btn-info tooltip tooltip-bottom"
-                            data-tip={gettext("Set Default")}
-                          >
-                            <.icon name="hero-star" class="w-4 h-4 hidden sm:inline" />
-                            <span class="sm:hidden whitespace-nowrap">
-                              {gettext("Set Default")}
-                            </span>
-                          </button>
-                        <% end %>
-                      </td>
-                      <td>
-                        <div class="flex justify-end gap-1">
-                          <button
+                        </button>
+                      <% end %>
+                    </.table_default_cell>
+                    <.table_default_cell>
+                      <div class="flex justify-end">
+                        <.table_row_menu id={"menu-#{currency.uuid}"}>
+                          <.table_row_menu_button
                             phx-click="show_edit_form"
                             phx-value-uuid={currency.uuid}
-                            class="btn btn-xs btn-outline btn-info tooltip tooltip-bottom"
-                            data-tip={gettext("Edit")}
-                          >
-                            <.icon name="hero-pencil" class="w-4 h-4 hidden sm:inline" />
-                            <span class="sm:hidden whitespace-nowrap">{gettext("Edit")}</span>
-                          </button>
+                            icon="hero-pencil"
+                            label={gettext("Edit")}
+                          />
+                          <.table_row_menu_button
+                            phx-click={if currency.enabled, do: "disable_currency", else: "enable_currency"}
+                            phx-value-uuid={currency.uuid}
+                            icon={if currency.enabled, do: "hero-eye-slash", else: "hero-eye"}
+                            label={if currency.enabled, do: gettext("Disable"), else: gettext("Enable")}
+                          />
                           <%= unless currency.is_default do %>
-                            <button
-                              phx-click="delete_currency"
+                            <.table_row_menu_button
+                              phx-click="set_default"
                               phx-value-uuid={currency.uuid}
-                              data-confirm={"Delete #{currency.code}? This cannot be undone."}
-                              class="btn btn-xs btn-outline btn-error tooltip tooltip-bottom"
-                              data-tip={gettext("Delete")}
-                            >
-                              <.icon name="hero-trash" class="w-4 h-4 hidden sm:inline" />
-                              <span class="sm:hidden whitespace-nowrap">{gettext("Delete")}</span>
-                            </button>
+                              icon="hero-star"
+                              label={gettext("Set as Default")}
+                            />
                           <% end %>
-                        </div>
-                      </td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            </div>
+                          <.table_row_menu_divider />
+                          <.table_row_menu_button
+                            phx-click="delete_currency"
+                            phx-value-uuid={currency.uuid}
+                            data-confirm={gettext("Are you sure?")}
+                            icon="hero-trash"
+                            label={gettext("Delete")}
+                            variant="error"
+                          />
+                        </.table_row_menu>
+                      </div>
+                    </.table_default_cell>
+                  </.table_default_row>
+                <% end %>
+              </.table_default_body>
+            </.table_default>
           <% end %>
         <% end %>
       </div>
@@ -403,4 +484,3 @@
       <div class="modal-backdrop" phx-click="close_import"></div>
     </div>
   <% end %>
-

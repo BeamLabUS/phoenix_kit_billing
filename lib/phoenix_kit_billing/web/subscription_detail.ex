@@ -22,7 +22,7 @@ defmodule PhoenixKitBilling.Web.SubscriptionDetail do
   @impl true
   def mount(%{"id" => id}, _session, socket) do
     if Billing.enabled?() do
-      case Billing.get_subscription(id, preload: [:subscription_type, :payment_method]) do
+      case Billing.get_subscription(id, preload: [:subscription_type, :payment_method, :user]) do
         nil ->
           {:ok,
            socket
@@ -160,7 +160,7 @@ defmodule PhoenixKitBilling.Web.SubscriptionDetail do
   end
 
   defp reload_subscription(id) do
-    Billing.get_subscription(id, preload: [:subscription_type, :payment_method])
+    Billing.get_subscription(id, preload: [:subscription_type, :payment_method, :user])
   end
 
   # Helper functions for template

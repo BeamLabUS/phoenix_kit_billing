@@ -10,6 +10,7 @@ defmodule PhoenixKitBilling.Web.SubscriptionTypes do
   import PhoenixKitWeb.Components.Core.AdminPageHeader
   alias PhoenixKit.Utils.Routes
   import PhoenixKitWeb.Components.Core.Icon
+  import PhoenixKitWeb.Components.Core.TableRowMenu
   import PhoenixKitBilling.Web.Components.CurrencyDisplay
 
   alias PhoenixKit.Settings
