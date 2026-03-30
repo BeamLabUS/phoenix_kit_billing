@@ -22,149 +22,96 @@ defmodule PhoenixKitBilling.Web.Routes do
   end
 
   def admin_routes do
-    quote do
-      # Orders
-      live("/admin/billing/orders/new", unquote(Web.OrderForm), :new, as: :billing_order_new)
-
-      live("/admin/billing/orders/:id", unquote(Web.OrderDetail), :show,
-        as: :billing_order_detail
-      )
-
-      live("/admin/billing/orders/:id/edit", unquote(Web.OrderForm), :edit,
-        as: :billing_order_edit
-      )
-
-      # Invoices
-      live("/admin/billing/invoices/:id", unquote(Web.InvoiceDetail), :show,
-        as: :billing_invoice_detail
-      )
-
-      live("/admin/billing/invoices/:id/print", unquote(Web.InvoicePrint), :print,
-        as: :billing_invoice_print
-      )
-
-      live("/admin/billing/invoices/:id/receipt", unquote(Web.ReceiptPrint), :print,
-        as: :billing_receipt_print
-      )
-
-      live(
-        "/admin/billing/invoices/:invoice_uuid/credit-note/:transaction_uuid",
-        unquote(Web.CreditNotePrint),
-        :print,
-        as: :billing_credit_note_print
-      )
-
-      live(
-        "/admin/billing/invoices/:invoice_uuid/payment-confirmation/:transaction_uuid",
-        unquote(Web.PaymentConfirmationPrint),
-        :print,
-        as: :billing_payment_confirmation_print
-      )
-
-      # Subscriptions
-      live("/admin/billing/subscriptions/new", unquote(Web.SubscriptionForm), :new,
-        as: :billing_subscription_new
-      )
-
-      live("/admin/billing/subscriptions/:id", unquote(Web.SubscriptionDetail), :show,
-        as: :billing_subscription_detail
-      )
-
-      live("/admin/billing/subscriptions/:id/edit", unquote(Web.SubscriptionForm), :edit,
-        as: :billing_subscription_edit
-      )
-
-      # Subscription Types
-      live("/admin/billing/subscription-types/new", unquote(Web.SubscriptionTypeForm), :new,
-        as: :billing_subscription_type_new
-      )
-
-      live("/admin/billing/subscription-types/:id/edit", unquote(Web.SubscriptionTypeForm), :edit,
-        as: :billing_subscription_type_edit
-      )
-
-      # Billing Profiles
-      live("/admin/billing/profiles/new", unquote(Web.BillingProfileForm), :new,
-        as: :billing_profile_new
-      )
-
-      live("/admin/billing/profiles/:id/edit", unquote(Web.BillingProfileForm), :edit,
-        as: :billing_profile_edit
-      )
-    end
+    build_admin_routes("")
   end
 
   def admin_locale_routes do
+    build_admin_routes("_locale")
+  end
+
+  defp build_admin_routes(suffix) do
+    order_form = Web.OrderForm
+    order_detail = Web.OrderDetail
+    invoice_detail = Web.InvoiceDetail
+    invoice_print = Web.InvoicePrint
+    receipt_print = Web.ReceiptPrint
+    credit_note_print = Web.CreditNotePrint
+    payment_confirmation_print = Web.PaymentConfirmationPrint
+    subscription_form = Web.SubscriptionForm
+    subscription_detail = Web.SubscriptionDetail
+    subscription_type_form = Web.SubscriptionTypeForm
+    billing_profile_form = Web.BillingProfileForm
+
     quote do
       # Orders
-      live("/admin/billing/orders/new", unquote(Web.OrderForm), :new,
-        as: :billing_order_new_locale
+      live("/admin/billing/orders/new", unquote(order_form), :new,
+        as: :"billing_order_new#{unquote(suffix)}"
       )
 
-      live("/admin/billing/orders/:id", unquote(Web.OrderDetail), :show,
-        as: :billing_order_detail_locale
+      live("/admin/billing/orders/:id", unquote(order_detail), :show,
+        as: :"billing_order_detail#{unquote(suffix)}"
       )
 
-      live("/admin/billing/orders/:id/edit", unquote(Web.OrderForm), :edit,
-        as: :billing_order_edit_locale
+      live("/admin/billing/orders/:id/edit", unquote(order_form), :edit,
+        as: :"billing_order_edit#{unquote(suffix)}"
       )
 
       # Invoices
-      live("/admin/billing/invoices/:id", unquote(Web.InvoiceDetail), :show,
-        as: :billing_invoice_detail_locale
+      live("/admin/billing/invoices/:id", unquote(invoice_detail), :show,
+        as: :"billing_invoice_detail#{unquote(suffix)}"
       )
 
-      live("/admin/billing/invoices/:id/print", unquote(Web.InvoicePrint), :print,
-        as: :billing_invoice_print_locale
+      live("/admin/billing/invoices/:id/print", unquote(invoice_print), :print,
+        as: :"billing_invoice_print#{unquote(suffix)}"
       )
 
-      live("/admin/billing/invoices/:id/receipt", unquote(Web.ReceiptPrint), :print,
-        as: :billing_receipt_print_locale
+      live("/admin/billing/invoices/:id/receipt", unquote(receipt_print), :print,
+        as: :"billing_receipt_print#{unquote(suffix)}"
       )
 
       live(
         "/admin/billing/invoices/:invoice_uuid/credit-note/:transaction_uuid",
-        unquote(Web.CreditNotePrint),
+        unquote(credit_note_print),
         :print,
-        as: :billing_credit_note_print_locale
+        as: :"billing_credit_note_print#{unquote(suffix)}"
       )
 
       live(
         "/admin/billing/invoices/:invoice_uuid/payment-confirmation/:transaction_uuid",
-        unquote(Web.PaymentConfirmationPrint),
+        unquote(payment_confirmation_print),
         :print,
-        as: :billing_payment_confirmation_print_locale
+        as: :"billing_payment_confirmation_print#{unquote(suffix)}"
       )
 
       # Subscriptions
-      live("/admin/billing/subscriptions/new", unquote(Web.SubscriptionForm), :new,
-        as: :billing_subscription_new_locale
+      live("/admin/billing/subscriptions/new", unquote(subscription_form), :new,
+        as: :"billing_subscription_new#{unquote(suffix)}"
       )
 
-      live("/admin/billing/subscriptions/:id", unquote(Web.SubscriptionDetail), :show,
-        as: :billing_subscription_detail_locale
+      live("/admin/billing/subscriptions/:id", unquote(subscription_detail), :show,
+        as: :"billing_subscription_detail#{unquote(suffix)}"
       )
 
-      live("/admin/billing/subscriptions/:id/edit", unquote(Web.SubscriptionForm), :edit,
-        as: :billing_subscription_edit_locale
+      live("/admin/billing/subscriptions/:id/edit", unquote(subscription_form), :edit,
+        as: :"billing_subscription_edit#{unquote(suffix)}"
       )
 
       # Subscription Types
-      live("/admin/billing/subscription-types/new", unquote(Web.SubscriptionTypeForm), :new,
-        as: :billing_subscription_type_new_locale
+      live("/admin/billing/subscription-types/new", unquote(subscription_type_form), :new,
+        as: :"billing_subscription_type_new#{unquote(suffix)}"
       )
 
-      live("/admin/billing/subscription-types/:id/edit", unquote(Web.SubscriptionTypeForm), :edit,
-        as: :billing_subscription_type_edit_locale
+      live("/admin/billing/subscription-types/:id/edit", unquote(subscription_type_form), :edit,
+        as: :"billing_subscription_type_edit#{unquote(suffix)}"
       )
 
       # Billing Profiles
-      live("/admin/billing/profiles/new", unquote(Web.BillingProfileForm), :new,
-        as: :billing_profile_new_locale
+      live("/admin/billing/profiles/new", unquote(billing_profile_form), :new,
+        as: :"billing_profile_new#{unquote(suffix)}"
       )
 
-      live("/admin/billing/profiles/:id/edit", unquote(Web.BillingProfileForm), :edit,
-        as: :billing_profile_edit_locale
+      live("/admin/billing/profiles/:id/edit", unquote(billing_profile_form), :edit,
+        as: :"billing_profile_edit#{unquote(suffix)}"
       )
     end
   end

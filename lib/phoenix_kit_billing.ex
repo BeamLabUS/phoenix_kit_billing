@@ -2790,7 +2790,7 @@ defmodule PhoenixKitBilling do
         payment_method_uuid: payment_method_uuid,
         plan_name: type.name,
         price: type.price,
-        currency: type.currency || "EUR",
+        currency: type.currency || Settings.get_setting("billing_default_currency", "EUR"),
         status: status,
         current_period_start: period_start,
         current_period_end: period_end,

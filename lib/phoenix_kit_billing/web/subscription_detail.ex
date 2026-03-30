@@ -9,10 +9,10 @@ defmodule PhoenixKitBilling.Web.SubscriptionDetail do
   use Gettext, backend: PhoenixKitWeb.Gettext
   import PhoenixKitWeb.Components.Core.AdminPageHeader
   import PhoenixKitWeb.Components.Core.UserInfo
-  alias PhoenixKit.Utils.Routes
   import PhoenixKitWeb.Components.Core.Icon
   import PhoenixKitWeb.Components.Core.TimeDisplay
   import PhoenixKitBilling.Web.Components.CurrencyDisplay
+  import PhoenixKitBilling.Web.Components.SubscriptionHelpers
 
   alias PhoenixKit.Settings
   alias PhoenixKit.Utils.Routes
@@ -164,34 +164,6 @@ defmodule PhoenixKitBilling.Web.SubscriptionDetail do
   end
 
   # Helper functions for template
-
-  def status_badge_class(status) do
-    case status do
-      "active" -> "badge-success"
-      "trialing" -> "badge-info"
-      "past_due" -> "badge-warning"
-      "paused" -> "badge-neutral"
-      "cancelled" -> "badge-error"
-      _ -> "badge-ghost"
-    end
-  end
-
-  def format_interval(nil, _), do: "-"
-  def format_interval(_, nil), do: "-"
-
-  def format_interval(interval, interval_count) do
-    case {interval, interval_count} do
-      {"month", 1} -> "Monthly"
-      {"month", n} -> "Every #{n} months"
-      {"year", 1} -> "Yearly"
-      {"year", n} -> "Every #{n} years"
-      {"week", 1} -> "Weekly"
-      {"week", n} -> "Every #{n} weeks"
-      {"day", 1} -> "Daily"
-      {"day", n} -> "Every #{n} days"
-      _ -> "#{interval_count} #{interval}(s)"
-    end
-  end
 
   def days_until_renewal(%Subscription{current_period_end: nil}), do: nil
 

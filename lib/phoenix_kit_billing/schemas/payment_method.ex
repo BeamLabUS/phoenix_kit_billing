@@ -52,7 +52,7 @@ defmodule PhoenixKitBilling.PaymentMethod do
     field(:status, :string, default: "active")
 
     # Metadata
-    field(:label, :string)
+    field(:display_name, :string)
     field(:metadata, :map, default: %{})
 
     # User reference (cross-package — FK constraint in core migrations)
@@ -77,7 +77,7 @@ defmodule PhoenixKitBilling.PaymentMethod do
       :exp_year,
       :is_default,
       :status,
-      :label,
+      :display_name,
       :metadata,
       :user_uuid
     ])
@@ -160,8 +160,8 @@ defmodule PhoenixKitBilling.PaymentMethod do
     "Bank Account **** #{last4}"
   end
 
-  def display_name(%__MODULE__{type: _type, label: label}) when not is_nil(label) do
-    label
+  def display_name(%__MODULE__{type: _type, display_name: name}) when not is_nil(name) do
+    name
   end
 
   def display_name(%__MODULE__{type: type}) do

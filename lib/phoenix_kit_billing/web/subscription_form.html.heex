@@ -200,6 +200,7 @@
                     <button
                       type="button"
                       phx-click="pause_subscription"
+                      data-confirm="Pause this subscription? The customer will lose access."
                       class="btn btn-warning btn-sm"
                     >
                       <.icon name="hero-pause" class="w-4 h-4" /> Pause
@@ -207,6 +208,7 @@
                     <button
                       type="button"
                       phx-click="cancel_subscription"
+                      data-confirm="Cancel this subscription? It will end at the current period."
                       class="btn btn-error btn-sm"
                     >
                       <.icon name="hero-x-circle" class="w-4 h-4" /> Cancel
@@ -222,6 +224,7 @@
                     <button
                       type="button"
                       phx-click="cancel_subscription"
+                      data-confirm="Cancel this subscription? It will end at the current period."
                       class="btn btn-error btn-sm"
                     >
                       <.icon name="hero-x-circle" class="w-4 h-4" /> Cancel
@@ -230,6 +233,7 @@
                     <button
                       type="button"
                       phx-click="cancel_subscription"
+                      data-confirm="Cancel this subscription? The trial will end immediately."
                       class="btn btn-error btn-sm"
                     >
                       <.icon name="hero-x-circle" class="w-4 h-4" /> Cancel

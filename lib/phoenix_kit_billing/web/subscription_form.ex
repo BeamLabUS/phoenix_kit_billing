@@ -15,9 +15,9 @@ defmodule PhoenixKitBilling.Web.SubscriptionForm do
   use Gettext, backend: PhoenixKitWeb.Gettext
   import PhoenixKitWeb.Components.Core.AdminPageHeader
   import PhoenixKitWeb.Components.Core.UserInfo
-  alias PhoenixKit.Utils.Routes
   import PhoenixKitWeb.Components.Core.Icon
   import PhoenixKitBilling.Web.Components.CurrencyDisplay
+  import PhoenixKitBilling.Web.Components.SubscriptionHelpers
   import PhoenixKitWeb.Components.Core.TimeDisplay
 
   alias PhoenixKit.Settings
@@ -66,12 +66,7 @@ defmodule PhoenixKitBilling.Web.SubscriptionForm do
          |> push_navigate(to: Routes.path("/admin/billing/subscriptions"))}
 
       subscription ->
-        payment_methods =
-          try do
-            Billing.list_payment_methods(subscription.user_uuid, status: "active")
-          rescue
-            _ -> []
-          end
+        payment_methods = Billing.list_payment_methods(subscription.user_uuid, status: "active")
 
         {:noreply,
          socket
@@ -114,12 +109,7 @@ defmodule PhoenixKitBilling.Web.SubscriptionForm do
         {:noreply, put_flash(socket, :error, "User not found")}
 
       user ->
-        payment_methods =
-          try do
-            Billing.list_payment_methods(user.uuid, status: "active")
-          rescue
-            _ -> []
-          end
+        payment_methods = Billing.list_payment_methods(user.uuid, status: "active")
 
         {:noreply,
          socket
@@ -235,29 +225,22 @@ defmodule PhoenixKitBilling.Web.SubscriptionForm do
             if(enable_trial && trial_days != "", do: String.to_integer(trial_days), else: 0)
         }
 
-        try do
-          case Billing.create_subscription(user.uuid, attrs) do
-            {:ok, subscription} ->
-              {:noreply,
-               socket
-               |> put_flash(:info, "Subscription created successfully")
-               |> push_navigate(
-                 to: Routes.path("/admin/billing/subscriptions/#{subscription.uuid}")
-               )}
+        case Billing.create_subscription(user.uuid, attrs) do
+          {:ok, subscription} ->
+            {:noreply,
+             socket
+             |> put_flash(:info, "Subscription created successfully")
+             |> push_navigate(
+               to: Routes.path("/admin/billing/subscriptions/#{subscription.uuid}")
+             )}
 
-            {:error, %Ecto.Changeset{} = changeset} ->
-              error_msg = format_changeset_errors(changeset)
-              {:noreply, assign(socket, :error, error_msg)}
+          {:error, %Ecto.Changeset{} = changeset} ->
+            error_msg = format_changeset_errors(changeset)
+            {:noreply, assign(socket, :error, error_msg)}
 
-            {:error, reason} ->
-              {:noreply,
-               assign(socket, :error, "Failed to create subscription: #{inspect(reason)}")}
-          end
-        rescue
-          e ->
-            require Logger
-            Logger.error("Subscription save failed: #{Exception.message(e)}")
-            {:noreply, put_flash(socket, :error, "Something went wrong. Please try again.")}
+          {:error, reason} ->
+            {:noreply,
+             assign(socket, :error, "Failed to create subscription: #{inspect(reason)}")}
         end
     end
   end
@@ -300,7 +283,7 @@ defmodule PhoenixKitBilling.Web.SubscriptionForm do
       {:ok, _} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Subscription cancelled")
+         |> put_flash(:info, "Subscription will be cancelled at period end")
          |> push_navigate(
            to: Routes.path("/admin/billing/subscriptions/#{socket.assigns.subscription.uuid}")
          )}
@@ -346,20 +329,6 @@ defmodule PhoenixKitBilling.Web.SubscriptionForm do
 
   # Helper functions for template
 
-  def format_interval(interval, interval_count) do
-    case {interval, interval_count} do
-      {"month", 1} -> "Monthly"
-      {"month", n} -> "Every #{n} months"
-      {"year", 1} -> "Yearly"
-      {"year", n} -> "Every #{n} years"
-      {"week", 1} -> "Weekly"
-      {"week", n} -> "Every #{n} weeks"
-      {"day", 1} -> "Daily"
-      {"day", n} -> "Every #{n} days"
-      _ -> "#{interval_count} #{interval}(s)"
-    end
-  end
-
   def format_payment_method(pm) do
     case pm.type do
       "card" ->
@@ -369,17 +338,6 @@ defmodule PhoenixKitBilling.Web.SubscriptionForm do
 
       type ->
         String.capitalize(type)
-    end
-  end
-
-  def status_badge_class(status) do
-    case status do
-      "active" -> "badge-success"
-      "trialing" -> "badge-info"
-      "past_due" -> "badge-warning"
-      "paused" -> "badge-neutral"
-      "cancelled" -> "badge-error"
-      _ -> "badge-ghost"
     end
   end
 end

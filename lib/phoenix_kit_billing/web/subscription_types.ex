@@ -8,10 +8,10 @@ defmodule PhoenixKitBilling.Web.SubscriptionTypes do
   use Phoenix.LiveView
   use Gettext, backend: PhoenixKitWeb.Gettext
   import PhoenixKitWeb.Components.Core.AdminPageHeader
-  alias PhoenixKit.Utils.Routes
   import PhoenixKitWeb.Components.Core.Icon
   import PhoenixKitWeb.Components.Core.TableRowMenu
   import PhoenixKitBilling.Web.Components.CurrencyDisplay
+  import PhoenixKitBilling.Web.Components.SubscriptionHelpers
 
   alias PhoenixKit.Settings
   alias PhoenixKit.Utils.Routes
@@ -100,22 +100,6 @@ defmodule PhoenixKitBilling.Web.SubscriptionTypes do
       end
     else
       {:noreply, put_flash(socket, :error, "Subscription type not found")}
-    end
-  end
-
-  # Helper functions for template
-
-  def format_interval(interval, interval_count) do
-    case {interval, interval_count} do
-      {"month", 1} -> "Monthly"
-      {"month", n} -> "Every #{n} months"
-      {"year", 1} -> "Yearly"
-      {"year", n} -> "Every #{n} years"
-      {"week", 1} -> "Weekly"
-      {"week", n} -> "Every #{n} weeks"
-      {"day", 1} -> "Daily"
-      {"day", n} -> "Every #{n} days"
-      _ -> "#{interval_count} #{interval}(s)"
     end
   end
 end

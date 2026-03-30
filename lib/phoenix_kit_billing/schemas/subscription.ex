@@ -133,6 +133,7 @@ defmodule PhoenixKitBilling.Subscription do
       :grace_period_end,
       :renewal_attempts,
       :last_renewal_attempt_at,
+      :last_renewal_error,
       :metadata,
       :user_uuid,
       :billing_profile_uuid,

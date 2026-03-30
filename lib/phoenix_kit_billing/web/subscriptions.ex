@@ -15,6 +15,7 @@ defmodule PhoenixKitBilling.Web.Subscriptions do
   import PhoenixKitWeb.Components.Core.TableRowMenu
   import PhoenixKitWeb.Components.Core.TimeDisplay
   import PhoenixKitBilling.Web.Components.CurrencyDisplay
+  import PhoenixKitBilling.Web.Components.SubscriptionHelpers
 
   alias PhoenixKit.Settings
   alias PhoenixKit.Utils.Routes
@@ -171,33 +172,6 @@ defmodule PhoenixKitBilling.Web.Subscriptions do
     case params do
       [] -> ""
       _ -> "?" <> URI.encode_query(params)
-    end
-  end
-
-  # Helper functions for template
-
-  def status_badge_class(status) do
-    case status do
-      "active" -> "badge-success"
-      "trialing" -> "badge-info"
-      "past_due" -> "badge-warning"
-      "paused" -> "badge-neutral"
-      "cancelled" -> "badge-error"
-      _ -> "badge-ghost"
-    end
-  end
-
-  def format_interval(interval, interval_count) do
-    case {interval, interval_count} do
-      {"month", 1} -> "Monthly"
-      {"month", n} -> "Every #{n} months"
-      {"year", 1} -> "Yearly"
-      {"year", n} -> "Every #{n} years"
-      {"week", 1} -> "Weekly"
-      {"week", n} -> "Every #{n} weeks"
-      {"day", 1} -> "Daily"
-      {"day", n} -> "Every #{n} days"
-      _ -> "#{interval_count} #{interval}(s)"
     end
   end
 end
