@@ -298,16 +298,16 @@
                 <span class="text-base-content/60">Created</span>
                 <span><.time_ago datetime={@subscription.inserted_at} /></span>
               </div>
-              <%= if @subscription.started_at do %>
+              <%= if @subscription.current_period_start do %>
                 <div class="flex justify-between items-center">
                   <span class="text-base-content/60">Started</span>
-                  <span><.time_ago datetime={@subscription.started_at} /></span>
+                  <span><.time_ago datetime={@subscription.current_period_start} /></span>
                 </div>
               <% end %>
-              <%= if @subscription.ended_at do %>
+              <%= if @subscription.cancelled_at do %>
                 <div class="flex justify-between items-center">
                   <span class="text-base-content/60">Ended</span>
-                  <span><.time_ago datetime={@subscription.ended_at} /></span>
+                  <span><.time_ago datetime={@subscription.cancelled_at} /></span>
                 </div>
               <% end %>
             </div>
