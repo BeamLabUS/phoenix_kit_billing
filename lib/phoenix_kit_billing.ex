@@ -46,7 +46,7 @@ defmodule PhoenixKitBilling do
 
   alias PhoenixKit.Dashboard.Tab
   alias PhoenixKit.Settings
-  alias PhoenixKit.Utils.CountryData
+  alias PhoenixKit.Modules.Billing.CountryData
   alias PhoenixKit.Utils.Date, as: UtilsDate
   alias PhoenixKit.Utils.UUID, as: UUIDUtils
   alias PhoenixKitBilling.BillingProfile

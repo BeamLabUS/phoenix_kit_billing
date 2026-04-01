@@ -80,7 +80,7 @@ defmodule PhoenixKitBilling.Order do
   import Ecto.Changeset
   import Ecto.Query, warn: false
 
-  alias PhoenixKit.Utils.CountryData
+  alias PhoenixKit.Modules.Billing.CountryData
   alias PhoenixKit.Utils.Date, as: UtilsDate
   alias PhoenixKitBilling.BillingProfile
 

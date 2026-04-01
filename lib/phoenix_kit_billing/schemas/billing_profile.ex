@@ -58,7 +58,7 @@ defmodule PhoenixKitBilling.BillingProfile do
   import Ecto.Changeset
   import Ecto.Query, warn: false
 
-  alias PhoenixKit.Utils.CountryData
+  alias PhoenixKit.Modules.Billing.CountryData
   alias PhoenixKit.Utils.Date, as: UtilsDate
 
   @primary_key {:uuid, UUIDv7, autogenerate: true}

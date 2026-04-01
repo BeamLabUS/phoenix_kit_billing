@@ -10,7 +10,7 @@ defmodule PhoenixKitBilling.Web.InvoicePrint do
   alias PhoenixKit.Utils.Routes
 
   alias PhoenixKit.Settings
-  alias PhoenixKit.Utils.CountryData
+  alias PhoenixKit.Modules.Billing.CountryData
   alias PhoenixKit.Utils.Routes
   alias PhoenixKitBilling, as: Billing
   alias PhoenixKitBilling.Transaction

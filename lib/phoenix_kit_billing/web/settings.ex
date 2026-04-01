@@ -12,7 +12,7 @@ defmodule PhoenixKitBilling.Web.Settings do
   import PhoenixKitWeb.Components.Core.Icon
 
   alias PhoenixKit.Settings
-  alias PhoenixKit.Utils.CountryData
+  alias PhoenixKit.Modules.Billing.CountryData
   alias PhoenixKitBilling, as: Billing
 
   @impl true

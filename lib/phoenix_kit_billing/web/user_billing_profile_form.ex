@@ -10,7 +10,7 @@ defmodule PhoenixKitBilling.Web.UserBillingProfileForm do
   import PhoenixKitWeb.Components.Core.Icon
   import PhoenixKitWeb.Components.Core.FormFieldError
 
-  alias PhoenixKit.Utils.CountryData
+  alias PhoenixKit.Modules.Billing.CountryData
   alias PhoenixKit.Utils.Routes
   alias PhoenixKitBilling, as: Billing
   alias PhoenixKitBilling.BillingProfile
