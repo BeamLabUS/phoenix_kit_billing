@@ -3373,6 +3373,7 @@ defmodule PhoenixKitBilling do
       [company_info["city"], company_info["postal_code"]]
       |> Enum.filter(&(&1 && &1 != ""))
       |> Enum.join(" ")
+      |> String.trim()
 
     [
       company_info["address_line1"],
@@ -3381,7 +3382,7 @@ defmodule PhoenixKitBilling do
       company_info["state"],
       country_name
     ]
-    |> Enum.filter(&(&1 && &1 != "" && &1 != " "))
+    |> Enum.filter(&(&1 && &1 != ""))
     |> Enum.join("\n")
   end
 

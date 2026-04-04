@@ -6,12 +6,12 @@ defmodule PhoenixKit.Modules.Billing do
   which still references the old `PhoenixKit.Modules.Billing.*` namespace.
   Will be removed once core is fully migrated to `PhoenixKitBilling.*`.
 
-  Uses a catch-all via `unquote` to forward any function call to PhoenixKitBilling,
-  avoiding the need to maintain a manual list of delegated functions.
+  All public functions are explicitly delegated to PhoenixKitBilling.
   """
 
   # Module info and config
   defdelegate enabled?(), to: PhoenixKitBilling
+  defdelegate version(), to: PhoenixKitBilling
   defdelegate required_modules(), to: PhoenixKitBilling
   defdelegate enable_system(), to: PhoenixKitBilling
   defdelegate disable_system(), to: PhoenixKitBilling
@@ -154,4 +154,8 @@ defmodule PhoenixKit.Modules.Billing do
   # Checkout
   defdelegate create_checkout_session(invoice, provider, opts \\ []), to: PhoenixKitBilling
   defdelegate create_setup_session(user_uuid, provider, opts \\ []), to: PhoenixKitBilling
+
+  # Utilities
+  defdelegate format_company_address(company_info \\ nil), to: PhoenixKitBilling
+  defdelegate module_stats(), to: PhoenixKitBilling
 end

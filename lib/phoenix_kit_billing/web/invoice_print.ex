@@ -7,8 +7,6 @@ defmodule PhoenixKitBilling.Web.InvoicePrint do
 
   use Phoenix.LiveView
   use Gettext, backend: PhoenixKitWeb.Gettext
-  alias PhoenixKit.Utils.Routes
-
   alias PhoenixKit.Settings
   alias PhoenixKit.Utils.Routes
   alias PhoenixKitWeb.Live.Settings.Organization

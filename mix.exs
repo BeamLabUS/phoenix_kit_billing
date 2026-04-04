@@ -10,6 +10,8 @@ defmodule PhoenixKitBilling.MixProject do
       version: @version,
       elixir: "~> 1.18",
       elixirc_paths: elixirc_paths(Mix.env()),
+      # Needed for compat/billing.ex which redefines PhoenixKit.Modules.Billing.
+      # Remove when core is fully migrated to PhoenixKitBilling namespace.
       elixirc_options: [ignore_module_conflict: true],
       start_permanent: Mix.env() == :prod,
       deps: deps(),
