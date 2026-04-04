@@ -46,8 +46,9 @@ defmodule PhoenixKitBilling do
 
   alias PhoenixKit.Dashboard.Tab
   alias PhoenixKit.Settings
-  alias PhoenixKit.Modules.Billing.CountryData
+  alias PhoenixKit.Utils.CountryData
   alias PhoenixKit.Utils.Date, as: UtilsDate
+  alias PhoenixKitWeb.Live.Settings.Organization
   alias PhoenixKit.Utils.UUID, as: UUIDUtils
   alias PhoenixKitBilling.BillingProfile
   alias PhoenixKitBilling.Currency
@@ -113,6 +114,11 @@ defmodule PhoenixKitBilling do
   def module_name, do: "Billing"
 
   @impl PhoenixKit.Module
+  def version do
+    Application.spec(:phoenix_kit_billing, :vsn) |> to_string()
+  end
+
+  @impl PhoenixKit.Module
   def route_module, do: PhoenixKitBilling.Web.Routes
 
   @impl PhoenixKit.Module
@@ -120,9 +126,22 @@ defmodule PhoenixKitBilling do
     %{
       key: "billing",
       label: "Billing",
-      icon: "hero-credit-card",
-      description: "Payment providers, subscriptions, and invoices"
+      icon: "💰",
+      description: "Orders, invoices, billing profiles and multi-currency support"
     }
+  end
+
+  @doc """
+  Returns stats for the module card on the admin Modules page.
+  """
+  def module_stats do
+    config = get_config()
+
+    [
+      %{label: "Orders", value: config[:orders_count] || 0},
+      %{label: "Invoices", value: config[:invoices_count] || 0},
+      %{label: "Currencies", value: config[:currencies_count] || 0}
+    ]
   end
 
   @impl PhoenixKit.Module
@@ -1970,7 +1989,7 @@ defmodule PhoenixKitBilling do
     invoice_bank = invoice.bank_details || %{}
     billing_details = invoice.billing_details || %{}
     company = get_company_details()
-    bank = CountryData.get_bank_details()
+    bank = Organization.get_bank_details()
 
     %{
       "user_email" => user.email,
@@ -3313,7 +3332,7 @@ defmodule PhoenixKitBilling do
   end
 
   defp get_bank_details do
-    bank = CountryData.get_bank_details()
+    bank = Organization.get_bank_details()
 
     %{
       bank_name: bank["bank_name"] || "",
@@ -3329,13 +3348,41 @@ defmodule PhoenixKitBilling do
 
   # Returns company details for email templates using consolidated Settings
   defp get_company_details do
-    company = CountryData.get_company_info()
+    company = Organization.get_company_info()
 
     %{
       name: company["name"] || "",
-      address: CountryData.format_company_address(),
+      address: format_company_address(company),
       vat: company["vat_number"] || ""
     }
+  end
+
+  @doc """
+  Formats company address from a company_info map for document printing.
+  """
+  def format_company_address(company_info \\ nil) do
+    company_info = company_info || Organization.get_company_info()
+
+    country_name =
+      case CountryData.get_country_name(company_info["country"] || "") do
+        nil -> company_info["country"] || ""
+        name -> name
+      end
+
+    city_postal =
+      [company_info["city"], company_info["postal_code"]]
+      |> Enum.filter(&(&1 && &1 != ""))
+      |> Enum.join(" ")
+
+    [
+      company_info["address_line1"],
+      company_info["address_line2"],
+      city_postal,
+      company_info["state"],
+      country_name
+    ]
+    |> Enum.filter(&(&1 && &1 != "" && &1 != " "))
+    |> Enum.join("\n")
   end
 
   # ============================================

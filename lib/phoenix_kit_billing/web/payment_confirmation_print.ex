@@ -11,8 +11,8 @@ defmodule PhoenixKitBilling.Web.PaymentConfirmationPrint do
   alias PhoenixKit.Utils.Routes
 
   alias PhoenixKit.Settings
-  alias PhoenixKit.Modules.Billing.CountryData
   alias PhoenixKit.Utils.Routes
+  alias PhoenixKitWeb.Live.Settings.Organization
   alias PhoenixKitBilling, as: Billing
   alias PhoenixKitBilling.Transaction
 
@@ -80,13 +80,16 @@ defmodule PhoenixKitBilling.Web.PaymentConfirmationPrint do
   end
 
   defp get_company_info do
+    company = Organization.get_company_info()
+    bank = Organization.get_bank_details()
+
     %{
-      name: Settings.get_setting("billing_company_name", ""),
-      address: CountryData.format_company_address(),
-      vat: Settings.get_setting("billing_company_vat", ""),
-      bank_name: Settings.get_setting("billing_bank_name", ""),
-      bank_iban: Settings.get_setting("billing_bank_iban", ""),
-      bank_swift: Settings.get_setting("billing_bank_swift", "")
+      name: company["name"] || "",
+      address: PhoenixKitBilling.format_company_address(company),
+      vat: company["vat_number"] || "",
+      bank_name: bank["bank_name"] || "",
+      bank_iban: bank["iban"] || "",
+      bank_swift: bank["swift"] || ""
     }
   end
 
