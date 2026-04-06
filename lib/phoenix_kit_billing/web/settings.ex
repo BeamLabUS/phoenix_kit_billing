@@ -14,6 +14,7 @@ defmodule PhoenixKitBilling.Web.Settings do
   alias PhoenixKit.Settings
   alias PhoenixKit.Utils.CountryData
   alias PhoenixKitBilling, as: Billing
+  alias PhoenixKitWeb.Live.Settings.Organization
 
   @impl true
   def mount(_params, _session, socket) do
@@ -36,9 +37,9 @@ defmodule PhoenixKitBilling.Web.Settings do
   end
 
   defp load_settings(socket) do
-    # Get company info from consolidated Settings (with fallback to legacy keys)
-    company_info = CountryData.get_company_info()
-    bank_details = CountryData.get_bank_details()
+    # Get company info from Organization settings (with fallback to legacy keys)
+    company_info = Organization.get_company_info()
+    bank_details = Organization.get_bank_details()
     company_country = company_info["country"] || ""
 
     socket
@@ -52,7 +53,7 @@ defmodule PhoenixKitBilling.Web.Settings do
     |> assign(:tax_rate, Settings.get_setting("billing_default_tax_rate", "0"))
     # Company info (from consolidated source)
     |> assign(:company_info, company_info)
-    |> assign(:company_address_formatted, CountryData.format_company_address())
+    |> assign(:company_address_formatted, Billing.format_company_address(company_info))
     |> assign(:company_country_name, get_country_name(company_country))
     |> assign(:company_country, company_country)
     # For suggested tax rate
