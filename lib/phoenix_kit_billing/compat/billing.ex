@@ -120,7 +120,9 @@ defmodule PhoenixKit.Modules.Billing do
   defdelegate cancel_subscription(subscription, opts \\ []), to: PhoenixKitBilling
   defdelegate pause_subscription(subscription), to: PhoenixKitBilling
   defdelegate resume_subscription(subscription), to: PhoenixKitBilling
-  defdelegate change_subscription_type(subscription, new_type_uuid, opts \\ []), to: PhoenixKitBilling
+
+  defdelegate change_subscription_type(subscription, new_type_uuid, opts \\ []),
+    to: PhoenixKitBilling
 
   # Subscription Types
   defdelegate list_subscription_types(opts \\ []), to: PhoenixKitBilling
