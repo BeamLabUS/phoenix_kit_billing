@@ -181,6 +181,7 @@ lib/
     ├── events.ex                     # PubSub event broadcasts
     ├── paths.ex                      # Centralized URL path helpers
     ├── supervisor.ex                 # OTP Supervisor
+    ├── widgets.ex                    # Dashboard Widgets
     ├── providers/
     │   ├── provider.ex               # Provider behaviour (9 callbacks)
     │   ├── providers.ex              # Provider registry and routing
