@@ -1,6 +1,7 @@
-defmodule Framework.Billing.Widgets do
+defmodule PhoenixKitBilling.Widgets do
   require Logger
   import Ecto.Query
+
 
   @moduledoc """
   Dashboard Widgets for Billing & Subscription functionality from PhoenixKit.Billing.
@@ -11,39 +12,6 @@ defmodule Framework.Billing.Widgets do
   - Failed payment attempts
   - Churn rate
   """
-
-  def widgets do
-    [
-      %{
-        id: "billing_active_subscriptions",
-        title: "Active Subscriptions",
-        value: fn _user -> get_active_subscriptions() end,
-        roles: [:admin],
-        description: "Number of active customer subscriptions"
-      },
-      %{
-        id: "billing_mrr",
-        title: "Monthly Recurring Revenue",
-        value: fn user -> get_mrr(user) end,
-        roles: [:admin],
-        description: "Predicted monthly revenue from active subscriptions"
-      },
-      %{
-        id: "billing_failed_payments",
-        title: "Failed Payments",
-        value: fn _user -> get_failed_payments() end,
-        roles: [:admin],
-        description: "Payment attempts that failed in the last 30 days"
-      },
-      %{
-        id: "billing_churn_rate",
-        title: "Churn Rate",
-        value: fn _user -> get_churn_rate() end,
-        roles: [:admin],
-        description: "Percentage of subscriptions cancelled this month"
-      }
-    ]
-  end
 
   @doc """
   Check if the billing module is enabled and available.
@@ -66,7 +34,7 @@ defmodule Framework.Billing.Widgets do
     try do
       case Code.ensure_loaded(PhoenixKit.Billing) do
         {:module, _} ->
-          RepoHelper.repo().aggregate(
+          repo().aggregate(
             from(s in PhoenixKit.Billing.Subscription,
               where: s.status == :active
             ),
@@ -88,16 +56,13 @@ defmodule Framework.Billing.Widgets do
   Calculate Monthly Recurring Revenue (MRR).
   Sums up the monthly amount from all active subscriptions.
   """
-  defp get_mrr(user) do
-    unit = Cldr.Currency.symbol(PhoenixKitBilling.get_default_currency())
-
+  defp get_mrr() do
     try do
       case Code.ensure_loaded(PhoenixKit.Billing) do
         {:module, _} ->
-          case RepoHelper.repo().aggregate(
+          case repo().aggregate(
                  from(s in PhoenixKit.Billing.Subscription,
-                   where: s.status == :active,
-                   select: s.amount_cents
+                   where: s.status == :active
                  ),
                  :sum,
                  :amount_cents
@@ -108,16 +73,16 @@ defmodule Framework.Billing.Widgets do
             total_cents ->
               # Convert cents to dollars and format
               total_dollars = total_cents / 100.0
-              Number.Currency.number_to_currency(total_dollars, unit: unit)
+              total_dollars
           end
 
         {:error, _} ->
-          Number.Currency.number_to_currency(0, unit: unit)
+          0
       end
     rescue
       e ->
         Logger.warning("Error calculating MRR: #{inspect(e)}")
-        Number.Currency.number_to_currency(0, unit: unit)
+        0
     end
   end
 
@@ -130,7 +95,7 @@ defmodule Framework.Billing.Widgets do
         {:module, _} ->
           thirty_days_ago = DateTime.add(DateTime.utc_now(), -30, :day)
 
-          RepoHelper.repo().aggregate(
+          repo().aggregate(
             from(p in PhoenixKit.Billing.Payment,
               where: p.status == :failed and p.inserted_at >= ^thirty_days_ago
             ),
@@ -158,14 +123,14 @@ defmodule Framework.Billing.Widgets do
           # Get current month boundaries
           now = DateTime.utc_now()
           month_start = beginning_of_month(now)
-          month_end = end_of_month(now)
+          month_end = beginning_of_next_month()
 
           # Count subscriptions at start of month
           # Avoid division by zero
           subscriptions_at_start =
-            RepoHelper.repo().aggregate(
+            repo().aggregate(
               from(s in PhoenixKit.Billing.Subscription,
-                where: s.created_at <= ^month_start or s.status == :active
+                where: s.current_period_start <= ^month_start or s.status == :active
               ),
               :count,
               :id
@@ -173,12 +138,12 @@ defmodule Framework.Billing.Widgets do
 
           # Count subscriptions cancelled this month
           cancelled_this_month =
-            RepoHelper.repo().aggregate(
+            repo().aggregate(
               from(s in PhoenixKit.Billing.Subscription,
                 where:
                   s.status == :cancelled and
                     s.cancelled_at >= ^month_start and
-                    s.cancelled_at <= ^month_end
+                    s.cancelled_at < ^month_end
               ),
               :count,
               :id
@@ -186,15 +151,15 @@ defmodule Framework.Billing.Widgets do
 
           # Calculate percentage
           churn_percentage = cancelled_this_month / subscriptions_at_start * 100
-          Number.Percentage.number_to_percentage(churn_percentage)
+          churn_percentage
 
         {:error, _} ->
-          Number.Percentage.number_to_percentage(0)
+          0
       end
     rescue
       e ->
         Logger.warning("Error calculating churn rate: #{inspect(e)}")
-        Number.Percentage.number_to_percentage(0)
+        0
     end
   end
 
@@ -206,19 +171,48 @@ defmodule Framework.Billing.Widgets do
     DateTime.new!(Date.new!(year, month, 1), ~T[00:00:00])
   end
 
-  defp end_of_month(%DateTime{year: year, month: month}) do
-    last_day =
-      case month do
-        2 ->
-          if Date.leap_year?(Date.new!(year, month, 1)), do: 29, else: 28
+  def beginning_of_next_month do
+    now = DateTime.utc_now()
+    date = DateTime.to_date(now)
 
-        month when month in [4, 6, 9, 11] ->
-          30
+    first_of_this_month = %Date{year: date.year, month: date.month, day: 1}
+    first_of_next_month = Date.add(first_of_this_month, Date.days_in_month(date))
 
-        _ ->
-          31
-      end
-
-    DateTime.new!(Date.new!(year, month, last_day), ~T[23:59:59])
+    DateTime.new!(first_of_next_month, ~T[00:00:00], "Etc/UTC")
   end
+
+  def widgets() do
+    [
+      %{
+        uuid: "019da50b-7746-7d53-a6d3-5bda0564dc3a",
+        name: "Active Subscriptions",
+        value: fn _ -> get_active_subscriptions() end,
+        description: "Number of active customer subscriptions",
+        enabled: true
+      },
+      %{
+        uuid: "019db2ff-932a-7b52-a284-6efc15012c5d",
+        name: "Monthly Recurring Revenue",
+        value: fn _ -> get_mrr() end,
+        description: "Predicted monthly revenue from active subscriptions",
+        enabled: true
+      },
+      %{
+        uuid: "019da50b-7746-7d53-a6d3-5bda0564dc3f",
+        name: "Failed Payments",
+        value: fn _ -> get_failed_payments() end,
+        description: "Payment attempts that failed in the last 30 days",
+        enabled: true
+      },
+      %{
+        uuid: "019da50b-7746-7d53-a6d3-5bda0564dc3d",
+        name: "Churn Rate",
+        value: fn _ -> get_churn_rate() end,
+        description: "Percentage of subscriptions cancelled this month",
+        enabled: true
+      }
+    ]
+  end
+
+  defp repo, do: PhoenixKit.RepoHelper.repo()
 end

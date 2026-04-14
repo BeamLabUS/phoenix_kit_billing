@@ -68,8 +68,6 @@ defmodule PhoenixKitBilling.MixProject do
 
       # Stripe payment provider.
       {:stripity_stripe, "~> 3.2"},
-      {:number, "~> 1.0"},
-      {:ex_cldr_currencies, "~> 2.0"},
 
       # HTTP client for PayPal/Razorpay APIs.
       {:req, "~> 0.5"},
